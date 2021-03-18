@@ -117,27 +117,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         LatLng santaMonica = new LatLng(34.0195, -118.4912);
         googleMap.addMarker(new MarkerOptions()
                 .position(santaMonica)
-                .title("Santa Monica"));
+                .title("Santa Monica")
+                .snippet("Total cases: 100"));
 
         LatLng culverCity = new LatLng(34.0211, -118.3965);
         googleMap.addMarker(new MarkerOptions()
                 .position(culverCity)
-                .title("Culver City"));
+                .title("Culver City")
+                .snippet("Total cases: 100"));
 
         LatLng beverlyHills = new LatLng(34.0736, -118.4004);
         googleMap.addMarker(new MarkerOptions()
                 .position(beverlyHills)
-                .title("Beverly Hills"));
+                .title("Beverly Hills")
+                .snippet("Total cases: 100"));
 
         LatLng westHollywood = new LatLng(34.0900, -118.3617);
         googleMap.addMarker(new MarkerOptions()
                 .position(westHollywood)
-                .title("West Hollywood"));
+                .title("West Hollywood")
+                .snippet("Total cases: 100"));
 
         LatLng losAngeles = new LatLng(34.0522, -118.2437);
         googleMap.addMarker(new MarkerOptions()
                 .position(losAngeles)
-                .title("Los Angeles"));
+                .title("Los Angeles")
+                .snippet("Total cases: 100"));
     }
 
     private void getLocationPermission() {
