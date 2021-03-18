@@ -112,6 +112,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+
+        // Add markers in Santa Monica, Culver City, Beverly Hills, West Hollywood, Los Angeles
+        LatLng santaMonica = new LatLng(34.0195, -118.4912);
+        googleMap.addMarker(new MarkerOptions()
+                .position(santaMonica)
+                .title("Santa Monica"));
+
+        LatLng culverCity = new LatLng(34.0211, -118.3965);
+        googleMap.addMarker(new MarkerOptions()
+                .position(culverCity)
+                .title("Culver City"));
+
+        LatLng beverlyHills = new LatLng(34.0736, -118.4004);
+        googleMap.addMarker(new MarkerOptions()
+                .position(beverlyHills)
+                .title("Beverly Hills"));
+
+        LatLng westHollywood = new LatLng(34.0900, -118.3617);
+        googleMap.addMarker(new MarkerOptions()
+                .position(westHollywood)
+                .title("West Hollywood"));
+
+        LatLng losAngeles = new LatLng(34.0522, -118.2437);
+        googleMap.addMarker(new MarkerOptions()
+                .position(losAngeles)
+                .title("Los Angeles"));
     }
 
     private void getLocationPermission() {
