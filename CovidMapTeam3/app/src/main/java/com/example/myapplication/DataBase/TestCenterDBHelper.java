@@ -35,9 +35,10 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table testCenter (" +
-                "name text," +
-                "lat double," +
-                "long DOUBLE"+
+                "name TEXT," +
+                "lat DOUBLE," +
+                "long DOUBLE,"+
+                "address TEXT"+
                 ")");
     }
 
@@ -45,13 +46,14 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
-    public boolean addTestCenter(String name, double lat, double lon){
+    public boolean addTestCenter(String name, double lat, double lon, String address){
         try{
             SQLiteDatabase db = ts.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("name",name);
             values.put("lat",lat);
             values.put("long",lon);
+            values.put("long",address);
             db.insert(DATABASE_NAME,null,values);
             return true;
         }catch(Exception e) {
@@ -66,7 +68,8 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             TestCenter temp = new TestCenter(c.getString(c.getColumnIndex("name")),
                     c.getDouble(c.getColumnIndex("lat")),
-                    c.getDouble(c.getColumnIndex("long")));
+                    c.getDouble(c.getColumnIndex("long")),
+                    c.getString(c.getColumnIndex("address")));
             Log.v(TAG, temp.toString());
         }
         return "";
@@ -75,6 +78,16 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     public void clear(){
         SQLiteDatabase db = ts.getWritableDatabase();
         db.execSQL("DELETE FROM " + DATABASE_NAME);
+    }
+
+    public void initTestCenter(){
+        this.addTestCenter("Edendale Library - Echo Park", 34.07873,-118.2642767, "2044 Reservoir St, Los Angeles");
+        this.addTestCenter("LA Union Station", 34.056224,-118.2386961, "800 N. Alameda St., Los Angeles");
+        this.addTestCenter("Consulate General of Mexico", 34.0617154,-118.2800256, "2401 W 6th St., Los Angeles");
+        this.addTestCenter("Angeles Community Health Center - Los Angeles", 34.0559926,-118.2772331, "1919 W 7th Street 1st Floor, Los Angeles");
+        this.addTestCenter("LA Union Station", 34.056224,-118.2386961, "800 N. Alameda St., Los Angeles");
+        this.addTestCenter("LA Union Station", 34.056224,-118.2386961, "800 N. Alameda St., Los Angeles");
+        this.addTestCenter("LA Union Station", 34.056224,-118.2386961, "800 N. Alameda St., Los Angeles");
     }
 
 }
