@@ -4,11 +4,13 @@ public class TestCenter{
     private String name;
     private double lon;
     private double lat;
+    private String address;
 
-    public TestCenter(String name, double lat, double lon){
+    public TestCenter(String name, double lat, double lon, String address){
         this.name = name;
         this.lat = lat;
         this.lon = lon;
+        this.address = address;
     }
 
     public String getName(){
