@@ -2,6 +2,7 @@ package com.example.myapplication.ui.home;
 
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -98,12 +100,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         Log.i(TAG, "On Map Ready");
 
         // Add a marker in USC and move the camera
-        LatLng usc = new LatLng(34.0224, -118.2852);
-        googleMap.addMarker(new MarkerOptions()
-                .position(usc)
-                .title("USC"));
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(usc));
+//        LatLng usc = new LatLng(34.0224, -118.2852);
+//        googleMap.addMarker(new MarkerOptions()
+//                .position(usc)
+//                .title("USC")
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
 
@@ -122,35 +123,42 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
-                    .snippet("Total cases: 100"));
+                    .snippet("Total cases: 100")
+                    .icon(BitmapDescriptorFactory.defaultMarker(40)));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
         Marker culverCity = googleMap.addMarker(
                 new MarkerOptions()
                     .position(culverCityLatLng)
                     .title("Culver City")
-                    .snippet("Total cases: 200"));
+                    .snippet("Total cases: 200")
+                    .icon(BitmapDescriptorFactory.defaultMarker(30)));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
         Marker beverlyHills = googleMap.addMarker(
                 new MarkerOptions()
                     .position(beverlyHillsLatLng)
                     .title("Beverly Hills")
-                    .snippet("Total cases: 300"));
+                    .snippet("Total cases: 300")
+                    .icon(BitmapDescriptorFactory.defaultMarker(20)));
 
         LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
         Marker westHollywood = googleMap.addMarker(
                 new MarkerOptions()
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
-                    .snippet("Total cases: 400"));
+                    .snippet("Total cases: 400")
+                    .icon(BitmapDescriptorFactory.defaultMarker(10)));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
         Marker losAngeles = googleMap.addMarker(
                 new MarkerOptions()
                     .position(losAngelesLatLng)
                     .title("Los Angeles")
-                    .snippet("Total cases: 500"));
+                    .snippet("Total cases: 500")
+                    .icon(BitmapDescriptorFactory.defaultMarker(0)));
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(culverCityLatLng));
     }
 
     private void getLocationPermission() {
