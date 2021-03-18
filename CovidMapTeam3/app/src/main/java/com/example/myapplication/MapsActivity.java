@@ -53,6 +53,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient fusedLocationProviderClient;
 
+    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // not granted.
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -61,7 +63,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location lastKnownLocation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i("TAG", "On Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
 
@@ -77,8 +80,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
     }
 
     /**
@@ -95,12 +96,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
 
+        Log.i(TAG, "On Map Ready");
+
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         map.addMarker(new MarkerOptions()
                 .position(sydney)
-                .title("Marker in Sydney"));
+                .title("Marker in Sydney!!!"));
         map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        // Prompt the user for permission.
+        getLocationPermission();
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
@@ -119,6 +125,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
+
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
