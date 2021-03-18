@@ -114,35 +114,40 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         getDeviceLocation();
 
         // Add markers in Santa Monica, Culver City, Beverly Hills, West Hollywood, Los Angeles
-        LatLng santaMonica = new LatLng(34.0195, -118.4912);
-        googleMap.addMarker(new MarkerOptions()
-                .position(santaMonica)
-                .title("Santa Monica")
-                .snippet("Total cases: 100"));
+        LatLng santaMonicaLatLng = new LatLng(34.0195, -118.4912);
+        Marker santaMonica = googleMap.addMarker(
+                new MarkerOptions()
+                    .position(santaMonicaLatLng)
+                    .title("Santa Monica")
+                    .snippet("Total cases: 100"));
 
-        LatLng culverCity = new LatLng(34.0211, -118.3965);
-        googleMap.addMarker(new MarkerOptions()
-                .position(culverCity)
-                .title("Culver City")
-                .snippet("Total cases: 100"));
+        LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
+        Marker culverCity = googleMap.addMarker(
+                new MarkerOptions()
+                    .position(culverCityLatLng)
+                    .title("Culver City")
+                    .snippet("Total cases: 200"));
 
-        LatLng beverlyHills = new LatLng(34.0736, -118.4004);
-        googleMap.addMarker(new MarkerOptions()
-                .position(beverlyHills)
-                .title("Beverly Hills")
-                .snippet("Total cases: 100"));
+        LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
+        Marker beverlyHills = googleMap.addMarker(
+                new MarkerOptions()
+                    .position(beverlyHillsLatLng)
+                    .title("Beverly Hills")
+                    .snippet("Total cases: 300"));
 
-        LatLng westHollywood = new LatLng(34.0900, -118.3617);
-        googleMap.addMarker(new MarkerOptions()
-                .position(westHollywood)
-                .title("West Hollywood")
-                .snippet("Total cases: 100"));
+        LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
+        Marker westHollywood = googleMap.addMarker(
+                new MarkerOptions()
+                    .position(westHollywoodLatLng)
+                    .title("West Hollywood")
+                    .snippet("Total cases: 400"));
 
-        LatLng losAngeles = new LatLng(34.0522, -118.2437);
-        googleMap.addMarker(new MarkerOptions()
-                .position(losAngeles)
-                .title("Los Angeles")
-                .snippet("Total cases: 100"));
+        LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
+        Marker losAngeles = googleMap.addMarker(
+                new MarkerOptions()
+                    .position(losAngelesLatLng)
+                    .title("Los Angeles")
+                    .snippet("Total cases: 500"));
     }
 
     private void getLocationPermission() {
