@@ -28,4 +28,23 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    public interface OnBackListener {
+        // return True if the listener has consumed the event, false otherwise.
+        boolean onBackListener();
+    }
+
+    OnBackListener mOnBackListener;
+
+    // set webView onBack
+    public void setOnBackListener(OnBackListener onBackListener) {
+        mOnBackListener = onBackListener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mOnBackListener == null || !mOnBackListener.onBackListener()) {
+            super.onBackPressed();
+        }
+    }
+
 }
