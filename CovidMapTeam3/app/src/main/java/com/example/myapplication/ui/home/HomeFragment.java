@@ -11,15 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.MapsActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.ui.setting.SettingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,6 +66,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private Location lastKnownLocation;
 
+    private static String defaultCity = "Los Angeles City";
+
+    private SettingViewModel viewModel;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -81,6 +89,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         myMAPF.getMapAsync(this);
 
+        // Reference: https://nabeelj.medium.com/android-how-to-share-data-between-fragments-using-viewmodel-and-livedata-android-mvvm-9fc463af5152
+        viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
+        // ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+
+        viewModel.getCity().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                Log.d(TAG, "onChanged: City");
+                Log.d(TAG, s);
+                defaultCity = s;
+            }
+        });
+
         return root;
     }
 
@@ -90,6 +111,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         this.map = googleMap;
 
         Log.i(TAG, "On Map Ready");
+
+        Log.i(TAG, defaultCity);
 
         // Add a marker in USC and move the camera
 //        LatLng usc = new LatLng(34.0224, -118.2852);
@@ -162,6 +185,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        if (defaultCity.compareTo("Los Angeles City") == 0){
+            losAngeles.showInfoWindow();
+        }
+        else if (defaultCity.compareTo("Culver City") == 0){
+            culverCity.showInfoWindow();
+        }
+        else if (defaultCity.compareTo("Santa Monica") == 0){
+            santaMonica.showInfoWindow();
+        }
+        else if (defaultCity.compareTo("Beverly Hills") == 0){
+            beverlyHills.showInfoWindow();
+        }
+        else if (defaultCity.compareTo("West Hollywood") == 0){
+            westHollywood.showInfoWindow();
+        }
+
+        defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
     }
 
     private void getLocationPermission() {
