@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
-                    .snippet("Total cases: 100")
+                    .snippet("Total cases: 4515\nCase Rate: 4884\nDeath: 156\n14-Day Case: 57\n14-Day Case Rate: 62")
                     .icon(BitmapDescriptorFactory.defaultMarker(40)));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(culverCityLatLng)
                     .title("Culver City")
-                    .snippet("Total cases: 200")
+                    .snippet("Total cases: 2131\nCase Rate: 5346\nDeath: 96\n14-Day Case: 26\n14-Day Case Rate: 65")
                     .icon(BitmapDescriptorFactory.defaultMarker(30)));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(beverlyHillsLatLng)
                     .title("Beverly Hills")
-                    .snippet("Total cases: 300")
+                    .snippet("Total cases: 2566\nCase Rate: 7433\nDeath: 34\n14-Day Case: 35\n14-Day Case Rate: 101")
                     .icon(BitmapDescriptorFactory.defaultMarker(20)));
 
         LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
@@ -139,7 +139,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
-                    .snippet("Total cases: 400")
+                    .snippet("Total cases: 2194\nCase Rate: 5938\nDeath: 35\n14-Day Case: 29\n14-Day Case Rate: 78")
                     .icon(BitmapDescriptorFactory.defaultMarker(10)));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
@@ -147,11 +147,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(losAngelesLatLng)
                     .title("Los Angeles")
-                    .snippet("Total cases: 500"+"\nEdendale Library - Echo Park\", 34.07873,-118.2642767, \"2044 Reservoir St, Los Angeles\"")
+                    .snippet("Total cases: 492519\nCase Rate: 12177\nDeath: 9154\n14-Day Case: 10017\n14-Day Case Rate: 101.47")
                     .icon(BitmapDescriptorFactory.defaultMarker(0)));
 
-
-        TestCenterDBHelper.getInstance(getActivity());
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -159,7 +157,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 alertDialogBuilder.setTitle(marker.getTitle());
                 alertDialogBuilder.setMessage(marker.getSnippet());
                 AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();//将dialog显示出来
+                alertDialog.show(); // Show Dialog
                 return true;
             }
         });
