@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
-import com.example.myapplication.MapsActivity;
+import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.setting.SettingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;

@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.setting;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activity.AboutActivity;
 
 public class SettingFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -43,6 +45,12 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+
+        // Button About
+        root.findViewById(R.id.about_btn).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AboutActivity.class);
+            startActivity(intent);
+        });
 
         return root;
     }
