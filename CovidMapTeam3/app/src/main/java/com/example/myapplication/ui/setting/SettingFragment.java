@@ -19,13 +19,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activity.AboutActivity;
+import com.example.myapplication.ui.home.SharedViewModel;
 
 public class SettingFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private SettingViewModel settingViewModel;
+    private SharedViewModel sharedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +49,9 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        // Shared View Model
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+
         // Button About
         root.findViewById(R.id.about_btn).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AboutActivity.class);
@@ -61,6 +67,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
         Log.d("On Item Selected", text);
         settingViewModel.setCity(text);
+        sharedViewModel.setNameData(text);
     }
 
     @Override

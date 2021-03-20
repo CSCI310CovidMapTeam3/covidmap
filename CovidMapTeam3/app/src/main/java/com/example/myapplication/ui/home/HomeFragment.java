@@ -66,9 +66,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private Location lastKnownLocation;
 
-    private static String defaultCity = "Los Angeles City";
+    private static String defaultCity = "";
 
-    private SettingViewModel viewModel;
+    private SharedViewModel sharedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -90,18 +90,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         myMAPF.getMapAsync(this);
 
         // Reference: https://nabeelj.medium.com/android-how-to-share-data-between-fragments-using-viewmodel-and-livedata-android-mvvm-9fc463af5152
-        viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
-        // ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 
-        viewModel.getCity().observe(getViewLifecycleOwner(), new Observer<String>() {
+        Observer<String> nameObserver = new Observer<String>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                Log.d(TAG, "onChanged: City");
-                Log.d(TAG, s);
-                defaultCity = s;
+            public void onChanged(String name) {
+                defaultCity = name;
             }
-        });
+        };
 
+        sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
         return root;
     }
 
@@ -111,7 +109,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         this.map = googleMap;
 
         Log.i(TAG, "On Map Ready");
-
+        // defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
         Log.i(TAG, defaultCity);
 
         // Add a marker in USC and move the camera
@@ -200,8 +198,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         else if (defaultCity.compareTo("West Hollywood") == 0){
             westHollywood.showInfoWindow();
         }
-
-        defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
     }
 
     private void getLocationPermission() {
