@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
                     .snippet("Total cases: 4515\nCase Rate: 4884\nDeath: 156\n14-Day Case: 57\n14-Day Case Rate: 62")
-                    .icon(BitmapDescriptorFactory.defaultMarker(40)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(10)));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
         Marker culverCity = googleMap.addMarker(
@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .position(culverCityLatLng)
                     .title("Culver City")
                     .snippet("Total cases: 2131\nCase Rate: 5346\nDeath: 96\n14-Day Case: 26\n14-Day Case Rate: 65")
-                    .icon(BitmapDescriptorFactory.defaultMarker(30)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(40)));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
         Marker beverlyHills = googleMap.addMarker(
@@ -161,7 +161,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
                     .snippet("Total cases: 2194\nCase Rate: 5938\nDeath: 35\n14-Day Case: 29\n14-Day Case Rate: 78")
-                    .icon(BitmapDescriptorFactory.defaultMarker(10)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(30)));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
         Marker losAngeles = googleMap.addMarker(
