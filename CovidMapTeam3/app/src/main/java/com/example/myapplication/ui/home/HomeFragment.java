@@ -1,26 +1,23 @@
 package com.example.myapplication.ui.home;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.BuildConfig;
+import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.MapsActivity;
 import com.example.myapplication.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,7 +26,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,10 +35,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 
@@ -155,10 +147,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(losAngelesLatLng)
                     .title("Los Angeles")
-                    .snippet("Total cases: 500")
+                    .snippet("Total cases: 500"+"\nEdendale Library - Echo Park\", 34.07873,-118.2642767, \"2044 Reservoir St, Los Angeles\"")
                     .icon(BitmapDescriptorFactory.defaultMarker(0)));
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(culverCityLatLng));
+
+        TestCenterDBHelper.getInstance(getActivity());
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());
+                alertDialogBuilder.setTitle(marker.getTitle());
+                alertDialogBuilder.setMessage(marker.getSnippet());
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();//将dialog显示出来
+                return true;
+            }
+        });
+
     }
 
     private void getLocationPermission() {
