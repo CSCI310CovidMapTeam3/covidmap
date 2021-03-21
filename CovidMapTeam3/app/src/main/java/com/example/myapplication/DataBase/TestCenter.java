@@ -17,6 +17,18 @@ public class TestCenter{
         return this.name;
     }
 
+    public double getLat() {
+        return this.lat;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public double getLon() {
+        return this.lon;
+    }
+
     @Override
     public String toString() {
         return "TestCenter{" +

@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.setting;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,6 +57,14 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         root.findViewById(R.id.about_btn).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AboutActivity.class);
             startActivity(intent);
+        });
+
+        root.findViewById(R.id.clear_btn).setOnClickListener(v -> {
+            AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setTitle("Clear All Data");
+            alertDialogBuilder.setMessage("All your data has been deleted!");
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show(); // Show Dialog
         });
 
         return root;

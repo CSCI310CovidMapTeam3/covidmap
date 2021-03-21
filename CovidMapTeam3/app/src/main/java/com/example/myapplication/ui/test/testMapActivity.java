@@ -1,33 +1,32 @@
 package com.example.myapplication.ui.test;
 
-import android.app.AlertDialog;
-import android.content.Context;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.BuildConfig;
-import com.example.myapplication.DataBase.TestCenter;
-import com.example.myapplication.DataBase.TestCenterDBHelper;
-
-import com.example.myapplication.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,14 +35,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.example.myapplication.R;
 
-import java.util.ArrayList;
-
-public class TestFragment extends Fragment implements OnMapReadyCallback {
-
-
-
+public class testMapActivity extends AppCompatActivity implements OnMapReadyCallback{
     private static final String TAG = testMapActivity.class.getSimpleName();
 
     private GoogleMap map;
@@ -58,48 +57,54 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 10; // City Level
+    private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
     private Location lastKnownLocation;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i("TAG", "On Create");
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_home);
 
         // [START_EXCLUDE silent]
         // Construct a PlacesClient
-        Places.initialize(getActivity().getApplicationContext(), BuildConfig.MAPS_API_KEY);
-        placesClient = Places.createClient(getActivity());
+        Places.initialize(getApplicationContext(), BuildConfig.MAPS_API_KEY);
+        placesClient = Places.createClient(this);
 
         // Construct a FusedLocationProviderClient.
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        final SupportMapFragment myMAPF = (SupportMapFragment) getChildFragmentManager()
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        myMAPF.getMapAsync(this);
-
-        return root;
+        mapFragment.getMapAsync(this);
     }
 
-
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     *
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
 
         Log.i(TAG, "On Map Ready");
 
-        // Add a marker in USC and move the camera
-//        LatLng usc = new LatLng(34.0224, -118.2852);
-//        googleMap.addMarker(new MarkerOptions()
-//                .position(usc)
-//                .title("USC")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        map.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney!!!"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Prompt the user for permission.
         getLocationPermission();
@@ -109,40 +114,6 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
-//        // Add markers in Santa Monica, Culver City, Beverly Hills, West Hollywood, Los Angeles
-//        LatLng santaMonicaLatLng = new LatLng(34.0195, -118.4912);
-//        Marker santaMonica = googleMap.addMarker(
-//                new MarkerOptions()
-//                        .position(santaMonicaLatLng)
-//                        .title("Santa Monica")
-//                        .snippet("Total cases: 100")
-//                        .icon(BitmapDescriptorFactory.defaultMarker(40)));
-
-        TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
-        ArrayList<TestCenter> testList = inst.getListTestCenter();
-        for (TestCenter center : testList) {
-            LatLng tempLoc = new LatLng(center.getLat(), center.getLon());
-            Marker temp = googleMap.addMarker(
-                    new MarkerOptions()
-                            .position(tempLoc)
-                            .title(center.getName())
-                            .snippet(center.getAddress())
-                            .icon(BitmapDescriptorFactory.defaultMarker(40)));
-        }
-
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());
-                alertDialogBuilder.setTitle(marker.getTitle());
-                alertDialogBuilder.setMessage(marker.getSnippet());
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();//将dialog显示出来
-                return true;
-            }
-        });
-
     }
 
     private void getLocationPermission() {
@@ -151,13 +122,13 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
 
         } else {
-            ActivityCompat.requestPermissions(getActivity(),
+            ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
@@ -207,7 +178,7 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
+                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {

@@ -10,7 +10,7 @@ public class TrackingViewModel extends ViewModel {
 
     public TrackingViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is travel tracking fragment");
+        mText.setValue("Tracking feature is under development");
     }
 
     public LiveData<String> getText() {

@@ -171,6 +171,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .snippet("Total cases: 492519\nCase Rate: 12177\nDeath: 9154\n14-Day Case: 10017\n14-Day Case Rate: 101.47")
                     .icon(BitmapDescriptorFactory.defaultMarker(0)));
 
+        TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
+
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
