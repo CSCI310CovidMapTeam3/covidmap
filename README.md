@@ -1,6 +1,7 @@
 # Map Covid Team 3
 - **Before you start**
 - At Android emulator sidebar, click "...", go to "Location", set location to Los Angeles.
+- In file "local.properties", add the google maps API key.
 - **Home**
 - 5 Markers represent 5 cities.
 - Colors of the markers change with case numbers.
