@@ -4,6 +4,7 @@ Map Covid is an Android app that tracks Covid information for 5 cities arround L
 
 ## Before you start
 At Android emulator sidebar, click "...", go to "Location", set location to Los Angeles.
+
 In file "local.properties", add the google maps API key.
 ```java
 MAPS_API_KEY=AIzaSyDjhmz8ZWJUrCnU_DveuFKhkL2nXHWMQHM
