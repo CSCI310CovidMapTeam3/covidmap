@@ -256,6 +256,42 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return BitmapDescriptorFactory.HUE_BLUE;
     }
 
+    public String getSnippetByCityName(String name){
+        StringBuilder sb = new StringBuilder();
+        for (City city : cities){
+            if (city.getCityName().equals(name)){
+
+                sb.append("Total cases: ");
+                sb.append(city.getCaseNumber());
+                sb.append("\n");
+                sb.append("Case Rate: ");
+                try {
+                    sb.append(city.getCaseRate())
+                } catch (IllegalStateException ise){
+                    sb.append("--- No Population Data ---");
+                } catch (Exception e){
+                    sb.append("--- Internal Error ---");
+                }
+                sb.append("\n");
+                sb.append("Death: ");
+                sb.append(city.getDeathNumber());
+                sb.append("\n");
+                sb.append("14-Day Case: ");
+                sb.append(city.getFourteenDayCaseNumber());
+                sb.append("\n");
+                sb.append("14-Day Case Rate: ");
+                try {
+                    sb.append(city.getNewCaseRate())
+                } catch (IllegalStateException ise){
+                    sb.append("--- No Population Data ---");
+                } catch (Exception e){
+                    sb.append("--- Internal Error ---");
+                }
+            }
+        }
+        return "No such city found!";
+    }
+
     public String getDefaultCity() {
         return defaultCity;
     }
