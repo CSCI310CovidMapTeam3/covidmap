@@ -118,13 +118,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
         Log.i(TAG, defaultCity);
 
-        // Add a marker in USC and move the camera
-//        LatLng usc = new LatLng(34.0224, -118.2852);
-//        googleMap.addMarker(new MarkerOptions()
-//                .position(usc)
-//                .title("USC")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
 
 
@@ -143,7 +136,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
-                    .snippet("Total cases: 4515\nCase Rate: 4884\nDeath: 156\n14-Day Case: 57\n14-Day Case Rate: 62")
+                    .snippet(getSnippetByCityName(cities.get(0).getCityName()))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Santa Monica"))));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
@@ -151,7 +144,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(culverCityLatLng)
                     .title("Culver City")
-                    .snippet("Total cases: 2131\nCase Rate: 5346\nDeath: 96\n14-Day Case: 26\n14-Day Case Rate: 65")
+                    .snippet(getSnippetByCityName(cities.get(1).getCityName()))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Culver City"))));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
@@ -159,7 +152,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(beverlyHillsLatLng)
                     .title("Beverly Hills")
-                    .snippet("Total cases: 2566\nCase Rate: 7433\nDeath: 34\n14-Day Case: 35\n14-Day Case Rate: 101")
+                    .snippet(getSnippetByCityName(cities.get(2).getCityName()))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Beverly Hills"))));
 
         LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
@@ -167,7 +160,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
-                    .snippet("Total cases: 2194\nCase Rate: 5938\nDeath: 35\n14-Day Case: 29\n14-Day Case Rate: 78")
+                    .snippet(getSnippetByCityName(cities.get(3).getCityName()))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("West Hollywood"))));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
@@ -175,7 +168,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(losAngelesLatLng)
                     .title("Los Angeles City")
-                    .snippet("Total cases: 492519\nCase Rate: 12177\nDeath: 9154\n14-Day Case: 10017\n14-Day Case Rate: 101.47")
+                    .snippet(getSnippetByCityName(cities.get(4).getCityName()))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Los Angeles City"))));
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(34.0224, -118.2852))); // Position on USC
@@ -266,7 +259,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 sb.append("\n");
                 sb.append("Case Rate: ");
                 try {
-                    sb.append(city.getCaseRate())
+                    sb.append((int)city.getCaseRate());
                 } catch (IllegalStateException ise){
                     sb.append("--- No Population Data ---");
                 } catch (Exception e){
@@ -281,12 +274,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 sb.append("\n");
                 sb.append("14-Day Case Rate: ");
                 try {
-                    sb.append(city.getNewCaseRate())
+                    sb.append((int)city.getNewCaseRate());
                 } catch (IllegalStateException ise){
                     sb.append("--- No Population Data ---");
                 } catch (Exception e){
                     sb.append("--- Internal Error ---");
                 }
+                return sb.toString();
             }
         }
         return "No such city found!";

@@ -24,7 +24,7 @@ public class NewsFragmentTest {
         newsFragment = new NewsFragment();
     }
 
-    // test if the web page is correct
+    // White Box Test Case No. 16
     @Test
     public void testTwitterPage() {
         assertEquals(newsFragment.getUrl(), "https://twitter.com/dt_covid19");
