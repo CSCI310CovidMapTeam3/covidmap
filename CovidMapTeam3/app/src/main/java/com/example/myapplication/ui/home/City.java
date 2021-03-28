@@ -139,7 +139,7 @@ public class City {
         return rad * c;
     }
 
-    float getMarkerColor()
+    public float getMarkerColor()
     {
         // When case data is presented, the Color of Marker goes from Green (HUE_GREEN = 120) to Red (HUE_RED = 0)
         // When case data is missing, it will return blue (HUE_BLUE = 240)

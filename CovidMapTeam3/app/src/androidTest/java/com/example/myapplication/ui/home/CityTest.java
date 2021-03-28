@@ -2,6 +2,8 @@ package com.example.myapplication.ui.home;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,16 @@ public class CityTest {
     public void tearDown() throws Exception {
     }
 
+    // White Box Test Case No. 6
+    @Test
+    public void testGetMarkerColor() {
+        float realMarkerColorLosAngeles = (float) BitmapDescriptorFactory.HUE_RED;
+        float realMarkerColorSantaMonica = (float) BitmapDescriptorFactory.HUE_YELLOW;
+        assertEquals(realMarkerColorLosAngeles, losAngeles.getMarkerColor(), 1);
+        assertEquals(realMarkerColorSantaMonica, santaMonica.getMarkerColor(), 1);
+    }
+
+    // White Box Test Case No. 7
     @Test
     public void testGetCurrentCase() {
         int realCurrentCaseLosAngeles = 98504;
@@ -52,6 +64,7 @@ public class CityTest {
         assertEquals(realCurrentCaseSantaMonica, santaMonica.getCurrentCase());
     }
 
+    // White Box Test Case No. 8
     @Test
     public void testGetCaseRate() {
         double realCaseRateLosAngeles = 12986;
@@ -60,6 +73,7 @@ public class CityTest {
         assertEquals(realCaseRateSantaMonica, santaMonica.getCaseRate(), 1);
     }
 
+    // White Box Test Case No. 9
     @Test
     public void testGetNewCaseRate() {
         double realNewCaseRateLosAngeles = 264;
@@ -68,6 +82,7 @@ public class CityTest {
         assertEquals(realNewCaseRateSantaMonica, santaMonica.getNewCaseRate(), 1);
     }
 
+    // White Box Test Case No. 10
     @Test
     public void testGetDistanceBetweenCityCenterKM() {
         // Calculate by https://www.nhc.noaa.gov/gccalc.shtml in km
