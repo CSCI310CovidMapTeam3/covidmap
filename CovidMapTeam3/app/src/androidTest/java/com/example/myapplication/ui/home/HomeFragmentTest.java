@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -27,6 +28,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import kotlinx.coroutines.Dispatchers;
+import kotlinx.coroutines.GlobalScope;
+
 import static org.junit.Assert.*;
 
 /**
@@ -42,6 +51,8 @@ public class HomeFragmentTest {
     private boolean locationPermissionGranted;
     private SharedViewModel sharedViewModel;
     private FusedLocationProviderClient fusedLocationProviderClient;
+
+    String observedValue = "";
     @Before
     public void setUp() {
 
@@ -63,10 +74,9 @@ public class HomeFragmentTest {
 
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mainActivity);
-
-
     }
 
+    // Dummy Test Case on the execution of the start of testing function
     @Test
     public void useAppContext() {
         // Context of the app under test.
@@ -74,26 +84,38 @@ public class HomeFragmentTest {
         assertEquals("com.example.myapplication", appContext.getPackageName());
     }
 
+    // Dummy White Box Test Case on the successful start of HomeFragment
     @Test
     public void testHomeFragment() {
         assertTrue(homeFragment.testDummyFunction());
     }
 
+    // White Box Test Case No. 1
     @Test
     public void testHomeFragmentRequestPermission() {
+        locationPermissionGranted = false;
+        assertFalse(getLocationPermission());
+        locationPermissionGranted = true;
         assertTrue(getLocationPermission());
     }
 
+    // White Box Test Case No. 2
     @Test
     public void testHomeFragmentGetDeviceLocation() {
+        locationPermissionGranted = false;
+        assertFalse(getDeviceLocation());
         locationPermissionGranted = true;
         assertTrue(getDeviceLocation());
     }
 
+    // White Box Test Case No. 3
     @Test
     public void testHomeFragmentLastKnownLocation() {
         locationPermissionGranted = true;
         getDeviceLocation();
+
+        homeFragment.setLastKnownLocation(null);
+        assertNull(homeFragment.getLastKnownLocation());
 
         Location loc = new Location("");
         loc.setLatitude(34.0522);
@@ -102,8 +124,16 @@ public class HomeFragmentTest {
         homeFragment.setLastKnownLocation(loc);
         assertEquals(34.0522, homeFragment.getLastKnownLocation().getLatitude(), 0.01);
         assertEquals(-118.2437, homeFragment.getLastKnownLocation().getLongitude(), 0.01);
+
+        loc.setLatitude(-33.5066);
+        loc.setLongitude(150.9831);
+
+        homeFragment.setLastKnownLocation(loc);
+        assertEquals(-33.5066, homeFragment.getLastKnownLocation().getLatitude(), 0.01);
+        assertEquals(150.9831, homeFragment.getLastKnownLocation().getLongitude(), 0.01);
     }
 
+    // White Box Test Case No. 4
     @Test
     public void testHomeFragmentChangeDefaultLocation() {
         homeFragment.setDefaultCity("Los Angeles City");
@@ -112,13 +142,30 @@ public class HomeFragmentTest {
         assertEquals("", homeFragment.getDefaultCity());
     }
 
-    // Contains Bug, might need to use observer pattern
+    // White Box Test Case No. 5
     @Test
     public void SharedViewModelBasicGetSetData() {
         sharedViewModel = ViewModelProviders.of(mainActivity).get(SharedViewModel.class);
         sharedViewModel.setNameDataBackground("Los Angeles City");
-        // assertEquals("Los Angeles City", sharedViewModel.getNameDataBackground());
-        assertEquals("Los Angeles City", "Los Angeles City");
+
+        final Lock lock = new ReentrantLock();
+        final Condition goAhead = lock.newCondition();
+        /* Here goes everything you need to do before "pausing" */
+        lock.lock();
+        // The reason why we need to pause the clock is because we need to wait for the main thread
+        try {
+            /**
+             * Set whatever time limit you want/need
+             * You can also use notifiers like goAhead.signal(), from within another thread
+             */
+            goAhead.await(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            assertEquals("Los Angeles City", sharedViewModel.getNameDataBackground());
+        } finally {
+            lock.unlock();
+        }
+
+        assertEquals("Los Angeles City", sharedViewModel.getNameDataBackground());
     }
 
     private boolean getLocationPermission() {
@@ -129,8 +176,7 @@ public class HomeFragmentTest {
          */
         if (ContextCompat.checkSelfPermission(mainActivity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true;
+                == PackageManager.PERMISSION_GRANTED && locationPermissionGranted) {
             return true;
         } else {
             ActivityCompat.requestPermissions(mainActivity,
@@ -159,9 +205,12 @@ public class HomeFragmentTest {
                 });
                 return true;
             }
+            else{
+                throw new SecurityException("locationPermissionGranted==false");
+            }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage(), e);
+            return false;
         }
-        return false;
     }
 }
