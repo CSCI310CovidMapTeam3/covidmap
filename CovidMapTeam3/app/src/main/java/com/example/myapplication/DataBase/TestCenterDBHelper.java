@@ -34,6 +34,7 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     public TestCenterDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         context.deleteDatabase(DATABASE_NAME);
+
     }
 
     @Override
@@ -44,7 +45,7 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
                 "long DOUBLE,"+
                 "address TEXT"+
                 ")");
-        ts.initTestCenter();
+
     }
 
     @Override
@@ -85,8 +86,8 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
 
     public void clear(){
         SQLiteDatabase db = ts.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS '" + DATABASE_NAME + "'");
-        //db.execSQL("DELETE FROM " + DATABASE_NAME);
+        //db.execSQL("DROP TABLE IF EXISTS '" + DATABASE_NAME + "'");
+        db.execSQL("DELETE FROM " + DATABASE_NAME);
         //db.execSQL("DROP " + DATABASE_NAME);
     }
 
