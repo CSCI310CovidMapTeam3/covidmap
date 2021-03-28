@@ -24,6 +24,8 @@ public class NewsFragment extends Fragment {
     private NewsViewModel newsViewModel;
     private WebView mWebView;
 
+    private String url = "https://twitter.com/dt_covid19";
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         newsViewModel =
@@ -31,7 +33,7 @@ public class NewsFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_news, container, false);
         mWebView = root.findViewById(R.id.news_web_view);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl("https://twitter.com/dt_covid19");
+        mWebView.loadUrl(url);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -50,6 +52,10 @@ public class NewsFragment extends Fragment {
         });
 
         return root;
+    }
+
+    public String getUrl(){
+        return url;
     }
 
     @Override
