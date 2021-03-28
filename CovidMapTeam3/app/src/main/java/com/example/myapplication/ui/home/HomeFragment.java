@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     // A default location (Sydney, Australia) and default zoom to use when location permission is
-    // not granted.
+    // not granted. (We changed the logic so it should now be centered at LA)
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 10; // City Level
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -121,6 +121,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
 
+
         // Prompt the user for permission.
         getLocationPermission();
 
@@ -171,6 +172,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .snippet("Total cases: 492519\nCase Rate: 12177\nDeath: 9154\n14-Day Case: 10017\n14-Day Case Rate: 101.47")
                     .icon(BitmapDescriptorFactory.defaultMarker(0)));
 
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(losAngelesLatLng));
+
         TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -200,6 +203,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         else if (defaultCity.compareTo("West Hollywood") == 0){
             westHollywood.showInfoWindow();
         }
+    }
+
+    public String getDefaultCity() {
+        return defaultCity;
+    }
+
+    public void setDefaultCity(String defaultCity) {
+        HomeFragment.defaultCity = defaultCity;
+    }
+
+    public Location getLastKnownLocation() {
+        return lastKnownLocation;
+    }
+
+    public void setLastKnownLocation(Location lastKnownLocation) {
+        this.lastKnownLocation = lastKnownLocation;
+    }
+
+    public boolean testDummyFunction(){
+        return true;
+    }
+
+    public boolean testGetLocationPermission(){
+        getLocationPermission();
+        return true;
     }
 
     private void getLocationPermission() {

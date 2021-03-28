@@ -7,10 +7,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.ext.truth.view.PointerPropertiesSubject;
-
-import com.example.myapplication.ui.home.HomeFragment;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
