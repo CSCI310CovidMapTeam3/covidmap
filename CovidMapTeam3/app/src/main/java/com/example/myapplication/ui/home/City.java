@@ -1,6 +1,9 @@
 package com.example.myapplication.ui.home;
 
 import android.location.Location;
+
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import java.lang.Math;
 
 public class City {
@@ -14,8 +17,25 @@ public class City {
     private int recoveredCase;
     private int fourteenDayCaseNumber;
 
+
+
+    public City(String cityName, int cityId, Location center, int population, int caseNumber, int deathNumber, int recoveredCase, int fourteenDayCaseNumber) {
+        this.cityName = cityName;
+        this.cityId = cityId;
+        this.center = center;
+        this.population = population;
+        this.caseNumber = caseNumber;
+        this.deathNumber = deathNumber;
+        this.recoveredCase = recoveredCase;
+        this.fourteenDayCaseNumber = fourteenDayCaseNumber;
+    }
+
     public City(String name){
         cityName = name;
+    }
+
+    public String getCityName() {
+        return cityName;
     }
 
     public Location getCenter() {
@@ -70,21 +90,21 @@ public class City {
         return (this.caseNumber - this.recoveredCase);
     }
 
-    public double getCaseRate(){
+    public double getCaseRate() throws IllegalStateException {
         if (population == 0){
             throw new IllegalStateException("Population was not initialized");
         }
         return (caseNumber * (100000.0 / population));
     }
 
-    public double getNewCaseRate(){
+    public double getNewCaseRate() throws IllegalStateException {
         if (population == 0){
             throw new IllegalStateException("Population was not initialized");
         }
         return (fourteenDayCaseNumber * (100000.0 / population));
     }
 
-    public double getDistanceBetweenCityCenter(City other){
+    public double getDistanceBetweenCityCenterKM(City other) throws IllegalStateException {
         if (this.center == null){
             throw new IllegalStateException("Current City Center was not initialized");
         }
@@ -117,5 +137,25 @@ public class City {
         double rad = 6371;
         double c = 2 * Math.asin(Math.sqrt(a));
         return rad * c;
+    }
+
+    float getMarkerColor()
+    {
+        // When case data is presented, the Color of Marker goes from Green (HUE_GREEN = 120) to Red (HUE_RED = 0)
+        // When case data is missing, it will return blue (HUE_BLUE = 240)
+        try{
+            double currentCaseRate = this.getCaseRate();
+            if (currentCaseRate >= 10000.0){
+                return BitmapDescriptorFactory.HUE_RED;
+            }
+            else if (currentCaseRate <= 0.0){
+                return BitmapDescriptorFactory.HUE_GREEN;
+            }
+            else{
+                return (float) (((10000.0 - currentCaseRate) / 10000.0) * 120.0);
+            }
+        } catch(IllegalStateException e){
+            return BitmapDescriptorFactory.HUE_BLUE;
+        }
     }
 }

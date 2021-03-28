@@ -69,9 +69,9 @@ public class CityTest {
     }
 
     @Test
-    public void testGetDistanceBetweenCityCenter() {
+    public void testGetDistanceBetweenCityCenterKM() {
         // Calculate by https://www.nhc.noaa.gov/gccalc.shtml in km
-        double realDistanceBetweenLosAngelesSantaMonica = 23;
-        assertEquals(realDistanceBetweenLosAngelesSantaMonica, losAngeles.getDistanceBetweenCityCenter(santaMonica), 1);
+        double realDistanceBetweenLosAngelesSantaMonicaKM = 23;
+        assertEquals(realDistanceBetweenLosAngelesSantaMonicaKM, losAngeles.getDistanceBetweenCityCenterKM(santaMonica), 1);
     }
 }
