@@ -28,10 +28,10 @@ public class OnBoardingActivityTest {
 
     @Rule
     public ActivityTestRule<OnBoardingActivity> mActivityTestRule = new ActivityTestRule<>(OnBoardingActivity.class);
+            // find start button.class);
 
     @Test
     public void checkVisibility() {
-        // find start button
         ViewInteraction startBtnViewInteraction = onView(ViewMatchers.withId(R.id.start_btn));
         // check button visibility
         startBtnViewInteraction.check(matches(not(isDisplayed())));
