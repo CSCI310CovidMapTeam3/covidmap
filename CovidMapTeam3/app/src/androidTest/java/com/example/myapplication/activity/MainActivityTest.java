@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
