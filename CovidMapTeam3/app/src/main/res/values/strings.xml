@@ -9,6 +9,7 @@
     <string name="test_location">Test Location</string>
 
     <string-array name="cities">
+        <item>Not Selected</item>
         <item>Los Angeles City</item>
         <item>Culver City</item>
         <item>Santa Monica</item>
