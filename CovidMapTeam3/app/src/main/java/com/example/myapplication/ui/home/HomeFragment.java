@@ -204,7 +204,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void loadCityList(){
+    public void loadCityList(){
         cities = new ArrayList<City>();
 
         Location santaMonicaCityCenter = new Location("");
@@ -283,7 +283,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 return sb.toString();
             }
         }
-        return "No such city found!";
+        return name+" do not have informations in our system!";
     }
 
     public String getDefaultCity() {

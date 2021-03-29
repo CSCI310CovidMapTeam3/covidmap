@@ -213,4 +213,17 @@ public class HomeFragmentTest {
             return false;
         }
     }
+
+    // White Box Test Case No. 17
+    @Test
+    public void testgetSnippetByCityName() {
+        String NOTFOUND = " do not have informations in our system!";
+        homeFragment.loadCityList();
+        String testcityName1 = "Los Angeles City";
+        String testName1 = homeFragment.getSnippetByCityName(testcityName1);
+        assertNotEquals(testName1,testcityName1+NOTFOUND);
+        String testcityName2 = "Seattle";
+        String testName2 = homeFragment.getSnippetByCityName(testcityName2);
+        assertEquals(testName2, testcityName2+NOTFOUND);
+    }
 }
