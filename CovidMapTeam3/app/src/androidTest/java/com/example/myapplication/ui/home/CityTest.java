@@ -53,15 +53,20 @@ public class CityTest {
         float realMarkerColorSantaMonica = (float) BitmapDescriptorFactory.HUE_YELLOW;
         assertEquals(realMarkerColorLosAngeles, losAngeles.getMarkerColor(), 1);
         assertEquals(realMarkerColorSantaMonica, santaMonica.getMarkerColor(), 1);
+        losAngeles.setPopulation(0);
+        assertEquals(BitmapDescriptorFactory.HUE_BLUE, losAngeles.getMarkerColor(), 1);
+        losAngeles.setPopulation(3792621);
     }
 
     // White Box Test Case No. 7
     @Test
     public void testGetCurrentCase() {
-        int realCurrentCaseLosAngeles = 98504;
+        int realCurrentCaseLosAngeles = 98504; // We calculated by calculator on Phone
         assertEquals(realCurrentCaseLosAngeles, losAngeles.getCurrentCase());
-        int realCurrentCaseSantaMonica = 903;
+        int realCurrentCaseSantaMonica = 903; // We calculated by calculator on Phone
         assertEquals(realCurrentCaseSantaMonica, santaMonica.getCurrentCase());
+        City dummy = new City("Dummy");
+        assertEquals(0, dummy.getCurrentCase());
     }
 
     // White Box Test Case No. 8
@@ -71,6 +76,19 @@ public class CityTest {
         double realCaseRateSantaMonica = 4930;
         assertEquals(realCaseRateLosAngeles, losAngeles.getCaseRate(), 1);
         assertEquals(realCaseRateSantaMonica, santaMonica.getCaseRate(), 1);
+        losAngeles.setPopulation(0);
+        boolean illegalStateExceptionThrown = false;
+        boolean otherExceptionThrown = false;
+        try{
+            losAngeles.getCaseRate();
+        } catch (IllegalStateException e){
+            illegalStateExceptionThrown = true;
+        } catch (Exception e){
+            otherExceptionThrown = true;
+        }
+        assertTrue(illegalStateExceptionThrown);
+        assertFalse(otherExceptionThrown);
+        losAngeles.setPopulation(3792621);
     }
 
     // White Box Test Case No. 9
@@ -80,6 +98,19 @@ public class CityTest {
         double realNewCaseRateSantaMonica = 62;
         assertEquals(realNewCaseRateLosAngeles, losAngeles.getNewCaseRate(), 1);
         assertEquals(realNewCaseRateSantaMonica, santaMonica.getNewCaseRate(), 1);
+        losAngeles.setPopulation(0);
+        boolean illegalStateExceptionThrown = false;
+        boolean otherExceptionThrown = false;
+        try{
+            losAngeles.getNewCaseRate();
+        } catch (IllegalStateException e){
+            illegalStateExceptionThrown = true;
+        } catch (Exception e){
+            otherExceptionThrown = true;
+        }
+        assertTrue(illegalStateExceptionThrown);
+        assertFalse(otherExceptionThrown);
+        losAngeles.setPopulation(3792621);
     }
 
     // White Box Test Case No. 10
@@ -88,5 +119,21 @@ public class CityTest {
         // Calculate by https://www.nhc.noaa.gov/gccalc.shtml in km
         double realDistanceBetweenLosAngelesSantaMonicaKM = 23;
         assertEquals(realDistanceBetweenLosAngelesSantaMonicaKM, losAngeles.getDistanceBetweenCityCenterKM(santaMonica), 1);
+        assertEquals(0, losAngeles.getDistanceBetweenCityCenterKM(losAngeles), 1);
+
+        City dummy = new City("Dummy");
+        assertEquals(0, dummy.getCurrentCase());
+
+        boolean illegalStateExceptionThrown = false;
+        boolean otherExceptionThrown = false;
+        try{
+            losAngeles.getDistanceBetweenCityCenterKM(dummy);
+        } catch (IllegalStateException e){
+            illegalStateExceptionThrown = true;
+        } catch (Exception e){
+            otherExceptionThrown = true;
+        }
+        assertTrue(illegalStateExceptionThrown);
+        assertFalse(otherExceptionThrown);
     }
 }

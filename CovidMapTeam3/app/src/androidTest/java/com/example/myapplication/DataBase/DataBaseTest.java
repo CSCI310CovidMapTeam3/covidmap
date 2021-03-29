@@ -34,6 +34,7 @@ public class DataBaseTest {
         instanceOne.clear();
     }
 
+    // White Box Test Case No. 12
     @Test
     public void testDBInitialization() {
         TestCenterDBHelper instanceOne = TestCenterDBHelper.getInstance(instrumentationContext);
@@ -42,6 +43,7 @@ public class DataBaseTest {
         assertEquals("TestCenterDBHelper", instanceOne.getClass().getSimpleName());
     }
 
+    // White Box Test Case No. 13
     @Test
     public void testDBAdd(){
         TestCenterDBHelper instanceOne = TestCenterDBHelper.getInstance(instrumentationContext);
@@ -60,6 +62,7 @@ public class DataBaseTest {
         }
     }
 
+    // White Box Test Case No. 14
     @Test
     public void testDBClear(){
         TestCenterDBHelper instanceOne = TestCenterDBHelper.getInstance(instrumentationContext);
@@ -70,6 +73,7 @@ public class DataBaseTest {
         assertFalse(cursor.moveToNext());
     }
 
+    // White Box Test Case No. 15
     @Test
     public void testDBGet(){
         TestCenter temp1 = new TestCenter("test1", -2.4123412,63.4234, "temp address ave");
