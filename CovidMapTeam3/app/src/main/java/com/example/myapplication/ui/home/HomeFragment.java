@@ -136,7 +136,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
-                    .snippet(getSnippetByCityName(cities.get(0).getCityName()))
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Santa Monica")))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Santa Monica"))));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(culverCityLatLng)
                     .title("Culver City")
-                    .snippet(getSnippetByCityName(cities.get(1).getCityName()))
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Culver City")))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Culver City"))));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
@@ -152,7 +152,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(beverlyHillsLatLng)
                     .title("Beverly Hills")
-                    .snippet(getSnippetByCityName(cities.get(2).getCityName()))
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Beverly Hills")))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Beverly Hills"))));
 
         LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
@@ -160,7 +160,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
-                    .snippet(getSnippetByCityName(cities.get(3).getCityName()))
+                    .snippet(getSnippetByCityName(getSnippetByCityName("West Hollywood")))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("West Hollywood"))));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
@@ -168,7 +168,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(losAngelesLatLng)
                     .title("Los Angeles City")
-                    .snippet(getSnippetByCityName(cities.get(4).getCityName()))
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Los Angeles City")))
                     .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Los Angeles City"))));
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(34.0224, -118.2852))); // Position on USC
@@ -238,6 +238,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         cities.add(westHollywood);
         City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 3979576, 492519, 9154, 0, 10017);
         cities.add(losAngelesCity);
+
+        City chernobyl = new City("Chernobyl");
+        cities.add(chernobyl);
     }
 
     private float getMarkerColorFromCityName(String name){

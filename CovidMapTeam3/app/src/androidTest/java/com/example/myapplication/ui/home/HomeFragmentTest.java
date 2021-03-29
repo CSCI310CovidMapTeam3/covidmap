@@ -221,9 +221,26 @@ public class HomeFragmentTest {
         homeFragment.loadCityList();
         String testcityName1 = "Los Angeles City";
         String testName1 = homeFragment.getSnippetByCityName(testcityName1);
-        assertNotEquals(testName1,testcityName1+NOTFOUND);
+        assertEquals("Total cases: 492519\n" +
+                "Case Rate: 12376\n" +
+                "Death: 9154\n" +
+                "14-Day Case: 10017\n" +
+                "14-Day Case Rate: 251",testName1);
         String testcityName2 = "Seattle";
         String testName2 = homeFragment.getSnippetByCityName(testcityName2);
-        assertEquals(testName2, testcityName2+NOTFOUND);
+        assertEquals( testcityName2+NOTFOUND, testName2);
+    }
+
+    // White Box Test Case No. 18
+    @Test
+    public void testgetSnippetByCityNameExceptionHandle() {
+        homeFragment.loadCityList();
+        String testcityName1 = "Chernobyl";
+        String snippetChernobyl = homeFragment.getSnippetByCityName(testcityName1);
+        assertEquals("Total cases: 0\n" +
+                "Case Rate: --- No Population Data ---\n" +
+                "Death: 0\n" +
+                "14-Day Case: 0\n" +
+                "14-Day Case Rate: --- No Population Data ---",snippetChernobyl);
     }
 }
