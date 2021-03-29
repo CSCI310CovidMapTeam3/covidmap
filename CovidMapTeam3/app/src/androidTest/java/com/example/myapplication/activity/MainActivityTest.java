@@ -69,6 +69,14 @@ public class MainActivityTest {
         // release Espresso Intents capturing
         Intents.release();
     }
+    
+    //check home page button in the navigation bar
+    @Test
+    public void clickHomePage() {
+        ViewInteraction homePageButton = onView(ViewMatchers.withId(R.id.navigation_home));
+        homePageButton.perform(click());
+        homePageButton.check(matches(isDisplayed()));
+    }
 
 
     //check news feed button in the navigation bar
@@ -147,6 +155,54 @@ public class MainActivityTest {
         // check spinner select
         spinnerTextView.check(matches(withText(selectStr)));
     }
+    
+        @Test
+    public void checkSpinnerLosAngeles() {
+        // to setting
+        onView(ViewMatchers.withId(R.id.navigation_setting)).perform(click());
+        // get spinner text
+        ViewInteraction spinnerTextView = onView(allOf(withId(android.R.id.text1), withParent(withId(R.id.spinner1))));
+        // set select item
+        String selectStr = "Los Angeles City";
+        // get spinner select
+        onData(allOf(is(instanceOf(String.class)), is(selectStr))).perform(click());
+        // close spinner
+        pressBack();
+        // check spinner select
+        spinnerTextView.check(matches(withText(selectStr)));
+    }
+
+    @Test
+    public void checkSpinnerSantaMonica() {
+        // to setting
+        onView(ViewMatchers.withId(R.id.navigation_setting)).perform(click());
+        // get spinner text
+        ViewInteraction spinnerTextView = onView(allOf(withId(android.R.id.text1), withParent(withId(R.id.spinner1))));
+        // set select item
+        String selectStr = "Santa Monica";
+        // get spinner select
+        onData(allOf(is(instanceOf(String.class)), is(selectStr))).perform(click());
+        // close spinner
+        pressBack();
+        // check spinner select
+        spinnerTextView.check(matches(withText(selectStr)));
+    }
+
+    @Test
+    public void checkSpinnerNoSelection() {
+        // to setting
+        onView(ViewMatchers.withId(R.id.navigation_setting)).perform(click());
+        // get spinner text
+        ViewInteraction spinnerTextView = onView(allOf(withId(android.R.id.text1), withParent(withId(R.id.spinner1))));
+        // set select item
+        String selectStr = "Not Selected";
+        // get spinner select
+        onData(allOf(is(instanceOf(String.class)), is(selectStr))).perform(click());
+        // close spinner
+        pressBack();
+        // check spinner select
+        spinnerTextView.check(matches(withText(selectStr)));
+    }
 
     //test requirement 9 that "the user should be able to go to a setting page to view and manage privacy related setting"
     @Test
@@ -161,6 +217,21 @@ public class MainActivityTest {
         //clearAllDataButton.perform(click());
         //onView(withText("Clear All Data")).inRoot(RootMatchers.isPlatformPopup()).check(matches(isDisplayed()));
         //clearAllDataButton.inRoot(RootMatchers.isPlatformPopup()).check(matches(isDisplayed()));
+    }
+    
+        //check the notification bar in setting page
+    @Test
+    public void clickNotification() {
+        // find setting bottom
+        ViewInteraction settingBottom = onView(ViewMatchers.withId(R.id.navigation_setting));
+        // click
+        settingBottom.perform(click());
+        // find notification switch
+        ViewInteraction notification = onView(ViewMatchers.withId(R.id.switch1));
+        // click
+        notification.perform(click());
+        // check if the status has been changed
+        notification.check(matches(isChecked()));
     }
 
     /*@Test
