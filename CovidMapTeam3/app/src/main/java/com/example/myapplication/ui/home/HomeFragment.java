@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
+import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.setting.SettingViewModel;
@@ -105,7 +107,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
 
-        loadCityList();
+        loadNewestList();
         return root;
     }
 
@@ -204,6 +206,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    // load default List
     public void loadCityList(){
         cities = new ArrayList<City>();
 
@@ -242,6 +245,57 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         City chernobyl = new City("Chernobyl");
         cities.add(chernobyl);
     }
+
+    public void loadNewestList(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+        int[] newFourteenCases = WebSpider.getForteenCases();
+        if(newFourteenCases == null){
+            loadCityList();
+        }else{
+            cities = new ArrayList<City>();
+
+            Location santaMonicaCityCenter = new Location("");
+            Location culverCityCityCenter = new Location("");
+            Location beverlyHillsCityCenter = new Location("");
+            Location westHollywoodCityCenter = new Location("");
+            Location losAngelesCityCityCenter = new Location("");
+
+            santaMonicaCityCenter.setLatitude(34.0195);
+            santaMonicaCityCenter.setLongitude(-118.4912);
+
+            culverCityCityCenter.setLatitude(34.0211);
+            culverCityCityCenter.setLongitude(-118.3965);
+
+            beverlyHillsCityCenter.setLatitude(34.0736);
+            beverlyHillsCityCenter.setLongitude(-118.4004);
+
+            westHollywoodCityCenter.setLatitude(34.0900);
+            westHollywoodCityCenter.setLongitude(-118.3617);
+
+            losAngelesCityCityCenter.setLatitude(34.0522);
+            losAngelesCityCityCenter.setLongitude(-118.2437);
+
+
+
+            City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, 4515, 156, 0, newFourteenCases[0]);
+            cities.add(santaMonica);
+            City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, 2131, 96, 0, newFourteenCases[1]);
+            cities.add(culverCity);
+            City beverlyHills = new City("Beverly Hills", 3, beverlyHillsCityCenter, 34186, 2566, 34, 0, newFourteenCases[2]);
+            cities.add(beverlyHills);
+            City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, 2194, 35, 0, newFourteenCases[3]);
+            cities.add(westHollywood);
+            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 3979576, 492519, 9154, 0, newFourteenCases[4]);
+            cities.add(losAngelesCity);
+
+            City chernobyl = new City("Chernobyl");
+            cities.add(chernobyl);
+        }
+
+    }
+
 
     private float getMarkerColorFromCityName(String name){
         for (City city : cities){
@@ -286,7 +340,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 return sb.toString();
             }
         }
-        return name+" do not have informations in our system!";
+        return name;
+        //return name+" do not have informations in our system!";
     }
 
     public String getDefaultCity() {
@@ -401,4 +456,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
+
+
 }
