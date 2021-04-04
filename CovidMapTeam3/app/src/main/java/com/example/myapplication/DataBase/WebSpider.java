@@ -47,7 +47,7 @@ public class WebSpider {
             }
             Log.v(TAG, String.valueOf(results));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             Log.v(TAG, "!"+e.toString());
             return null;
