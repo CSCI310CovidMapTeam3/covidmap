@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterViewAnimator;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,6 +27,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.ui.home.SharedViewModel;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SettingFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -58,6 +62,35 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
             Intent intent = new Intent(getContext(), AboutActivity.class);
             startActivity(intent);
         });
+
+        Button btnToggleDark;
+        btnToggleDark
+                = root.findViewById(R.id.dark_btn);
+        AtomicBoolean isDark = new AtomicBoolean(false);
+        btnToggleDark.setOnClickListener(
+                view -> {
+                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO){
+                        AppCompatDelegate
+                                .setDefaultNightMode(
+                                        AppCompatDelegate
+                                                .MODE_NIGHT_YES);
+                        isDark.set(true);
+                    }else{
+                        AppCompatDelegate
+                                .setDefaultNightMode(
+                                        AppCompatDelegate
+                                                .MODE_NIGHT_NO);
+
+                        isDark.set(false);
+                    }
+
+                    if(isDark.get()){
+                        btnToggleDark.setText("Dark Model");
+                    }
+                    else{
+                        btnToggleDark.setText("Dark Model");
+                    }
+                });
 
         root.findViewById(R.id.clear_btn).setOnClickListener(v -> {
             AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());

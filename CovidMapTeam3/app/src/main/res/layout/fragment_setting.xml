@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.setting.SettingFragment">
 
     <TextView
@@ -31,6 +32,8 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="292dp"
         android:text="About"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/palegreen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.454"
@@ -101,10 +104,24 @@
         android:layout_marginRight="33dp"
         android:layout_marginBottom="29dp"
         android:text="Clear All Data"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/palegreen"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/about_btn" />
+
+    <Button
+        android:id="@+id/dark_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dark Model"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/palegreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="341dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
