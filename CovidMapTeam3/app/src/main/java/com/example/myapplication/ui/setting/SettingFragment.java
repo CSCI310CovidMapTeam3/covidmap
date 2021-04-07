@@ -37,6 +37,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.ui.home.SharedViewModel;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SettingFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -113,7 +114,6 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         // send a notification button
-
         Button sendNotification;
         sendNotification = root.findViewById(R.id.notification_btn);
         sendNotification.setOnClickListener(
@@ -135,11 +135,16 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                             .setAutoCancel(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getActivity());
-
                     // notificationId is a unique int for each notification that you must define
                     notificationManager.notify(1, builder.build());
                 }
         );
+
+        // show storage size
+        File appBaseFolder = this.getContext().getFilesDir().getParentFile();
+        long totalSize = browseFiles(appBaseFolder);
+        TextView storageSize = root.findViewById(R.id.text_storage);
+        storageSize.setText("Storage Size: " + totalSize + " total bytes.");
 
         return root;
     }
@@ -156,5 +161,19 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    // browse file helper function
+    private long browseFiles(File dir) {
+        long dirSize = 0;
+        for (File f: dir.listFiles()) {
+            dirSize += f.length();
+            // Log.d(STORAGE_TAG, dir.getAbsolutePath() + "/" + f.getName() + " uses " + f.length() + " bytes");
+            if (f.isDirectory()) {
+                dirSize += browseFiles(f);
+            }
+        }
+        // Log.d(STORAGE_TAG, dir.getAbsolutePath() + " uses " + dirSize + " bytes");
+        return dirSize;
     }
 }
