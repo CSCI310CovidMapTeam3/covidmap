@@ -2,10 +2,16 @@ package com.example.myapplication.ui.home;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +29,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
+import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.setting.SettingViewModel;
@@ -43,7 +50,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -107,10 +118,53 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
 
+        root.findViewById(R.id.share_screenshot).setOnClickListener(v -> {
+            captureScreen();
+        });
+
         loadNewestList();
         return root;
     }
 
+    public void captureScreen()
+    {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback()
+        {
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot)
+            {
+                Bitmap bitmap = snapshot;
+
+                Date now = new Date();
+                android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+                String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+                try {
+                    File imageFile = new File(mPath);
+
+                    String path = MediaStore.Images.Media.insertImage(
+                            getContext().getContentResolver(), bitmap, "CaseData" + Calendar.getInstance().getTime()
+                                    + ".png", null);
+
+                    Uri screenshotUri = Uri.parse(path);
+
+                    final Intent emailIntent = new Intent(
+                            android.content.Intent.ACTION_SEND);
+                    emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+                    emailIntent.setType("image/png");
+                    getContext().startActivity(Intent.createChooser(emailIntent,
+                            "Share Case Data"));
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        map.snapshot(callback);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
