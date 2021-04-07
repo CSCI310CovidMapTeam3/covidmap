@@ -122,6 +122,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             captureScreen();
         });
 
+        root.findViewById(R.id.my_location).setOnClickListener(v -> {
+            if (lastKnownLocation != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lastKnownLocation.getLatitude(),
+                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+            }
+        });
+
         loadNewestList();
         return root;
     }
@@ -245,18 +253,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         if (defaultCity.compareTo("Santa Monica") == 0){
             santaMonica.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(santaMonicaLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("Culver City") == 0){
             culverCity.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(culverCityLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("Beverly Hills") == 0){
             beverlyHills.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(beverlyHillsLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("West Hollywood") == 0){
             westHollywood.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(westHollywoodLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("Los Angeles City") == 0){
             losAngeles.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(losAngelesLatLng)); // Position on Santa Monica
         }
     }
 
@@ -491,11 +504,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             lastKnownLocation = task.getResult();
+                            /*
                             if (lastKnownLocation != null) {
                                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(lastKnownLocation.getLatitude(),
                                                 lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                             }
+                            */
+
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
