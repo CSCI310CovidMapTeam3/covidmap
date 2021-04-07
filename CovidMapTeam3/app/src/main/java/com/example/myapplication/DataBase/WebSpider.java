@@ -2,22 +2,26 @@ package com.example.myapplication.DataBase;
 
 import android.util.Log;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class WebSpider {
     private static final String TAG = "WebSpider";
     public static int[] getForteenCases(){
 
-        String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm#case-summary";
+        // String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm#case-summary";
+        String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm";
         int[] results = {0,0,0,0,0};
         try {
-            Document doc= Jsoup.connect(baseURL).get();
+            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
+            Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
             Elements eleCity = elements.get(2).children().get(0).children().get(0).children().get(1).children().get(1).children();
 
