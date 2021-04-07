@@ -168,12 +168,10 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         long dirSize = 0;
         for (File f: dir.listFiles()) {
             dirSize += f.length();
-            // Log.d(STORAGE_TAG, dir.getAbsolutePath() + "/" + f.getName() + " uses " + f.length() + " bytes");
             if (f.isDirectory()) {
                 dirSize += browseFiles(f);
             }
         }
-        // Log.d(STORAGE_TAG, dir.getAbsolutePath() + " uses " + dirSize + " bytes");
         return dirSize;
     }
 }
