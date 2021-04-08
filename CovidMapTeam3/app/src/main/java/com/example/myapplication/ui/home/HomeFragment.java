@@ -33,6 +33,7 @@ import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.setting.SettingViewModel;
+import com.example.myapplication.ui.tracking.TrackingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -85,7 +86,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private SharedViewModel sharedViewModel;
 
+    private TrackingViewModel trackingViewModel;
     ArrayList<City> cities;
+    private boolean lastKnownLocationInLA = true;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -108,6 +111,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         // Reference: https://nabeelj.medium.com/android-how-to-share-data-between-fragments-using-viewmodel-and-livedata-android-mvvm-9fc463af5152
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+        trackingViewModel = ViewModelProviders.of(requireActivity()).get(TrackingViewModel.class);
 
         Observer<String> nameObserver = new Observer<String>() {
             @Override
@@ -349,8 +353,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             losAngelesCityCityCenter.setLatitude(34.0522);
             losAngelesCityCityCenter.setLongitude(-118.2437);
 
-
-
             City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, 4515, 156, 0, newFourteenCases[0]);
             cities.add(santaMonica);
             City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, 2131, 96, 0, newFourteenCases[1]);
@@ -509,13 +511,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             lastKnownLocation = task.getResult();
-                            /*
+
                             if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                if (checkInLACounty() != -1){
+                                    lastKnownLocationInLA = true;
+                                    sharedViewModel.setCountyData("Los Angeles County");
+                                }
+                                else if (lastKnownLocationInLA){
+                                    lastKnownLocationInLA = false;
+                                    sharedViewModel.setCountyData("Not in Los Angeles County");
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                    alertDialogBuilder.setTitle("Friendly Warning");
+                                    alertDialogBuilder.setMessage("Out of Los Angeles County \n(Current Service Area)");
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show(); // Show Dialog
+                                }
                             }
-                            */
+                            else{
+                                sharedViewModel.setCountyData("Los Angeles County");
+                            }
 
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -530,6 +544,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage(), e);
         }
+    }
+
+    private int checkInLACounty(){ // 1 means in LA, 0 means location unknown, -1 means not in LA
+        if (lastKnownLocation != null) {
+            if (lastKnownLocation.getLatitude() > 33.5 &&  lastKnownLocation.getLatitude() < 34.1){
+                if (lastKnownLocation.getLongitude() > -118.6 && lastKnownLocation.getLongitude() < -118){
+                    Log.d(TAG, "checkInLACounty: In LA");
+                    return 1;
+                }
+            }
+            Log.d(TAG, "checkInLACounty: Not In LA");
+            return -1;
+        }
+        Log.d(TAG, "checkInLACounty: Null Location");
+        return 0; // Location is Null Default to True
     }
 
 

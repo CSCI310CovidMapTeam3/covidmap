@@ -45,7 +45,7 @@ public class WebSpider {
         String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm";
         //int[] results = {0,0,0,0,0};
         try {
-            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
+            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").timeout(3000).execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
             Elements eleCity = elements.get(2).children().get(0).children().get(0).children().get(1).children().get(1).children();

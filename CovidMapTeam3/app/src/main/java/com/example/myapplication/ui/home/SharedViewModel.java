@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 public class SharedViewModel extends ViewModel {
 
     private MutableLiveData<String> name;
+    private MutableLiveData<String> county;
 
     public void setNameData(String nameData) {
         if (name == null) {
@@ -14,10 +15,15 @@ public class SharedViewModel extends ViewModel {
 
         name.setValue(nameData);
 
-/*
-        If you are calling setNameData from a background thread use:
-        name.postValue(nameData);
-*/
+    }
+
+    public void setCountyData(String countyData) {
+        if (county == null) {
+            county = new MutableLiveData<>();
+        }
+
+        county.setValue(countyData);
+
     }
 
     public void setNameDataBackground(String nameData) {
@@ -27,10 +33,14 @@ public class SharedViewModel extends ViewModel {
 
         name.postValue(nameData);
 
-/*
-        If you are calling setNameData from a background thread use:
-        name.postValue(nameData);
-*/
+    }
+
+    public void setCountyDataBackground(String countyData) {
+        if (county == null) {
+            county = new MutableLiveData<>();
+        }
+
+        county.postValue(countyData);
     }
 
     public MutableLiveData<String> getNameData() {
@@ -39,6 +49,14 @@ public class SharedViewModel extends ViewModel {
         }
 
         return name;
+    }
+
+    public MutableLiveData<String> getCountyData() {
+        if (county == null) {
+            county = new MutableLiveData<>();
+        }
+
+        return county;
     }
 
     public String getNameDataBackground() {
@@ -50,5 +68,16 @@ public class SharedViewModel extends ViewModel {
         name.postValue("Los Angeles City");
 
         return name.getValue();
+    }
+
+    public String getCountyDataBackground() {
+
+        if (county == null) {
+            county = new MutableLiveData<>();
+        }
+
+        county.postValue("Los Angeles City");
+
+        return county.getValue();
     }
 }
