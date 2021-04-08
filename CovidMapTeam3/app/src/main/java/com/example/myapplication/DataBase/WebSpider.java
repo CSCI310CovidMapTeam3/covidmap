@@ -1,5 +1,6 @@
 package com.example.myapplication.DataBase;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jsoup.Connection;
@@ -14,17 +15,41 @@ import java.util.ArrayList;
 
 public class WebSpider {
     private static final String TAG = "WebSpider";
+
+    //singleton
+    private static WebSpider instance = new WebSpider();
+
+    private static int[] results = {0, 0, 0, 0, 0};
+
+
+//    public static WebSpider getInstance() {
+//        if (instance == null) {
+//            instance = new WebSpider();
+//            results = new int[]{0, 0, 0, 0, 0};
+//        }
+//        return instance;
+//    }
+
+    public static int[] getResults(){
+        return results;
+    }
+
+    public static void clearData(){
+        results = null;
+    }
+
+
     public static int[] getForteenCases(){
 
         // String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm#case-summary";
         String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm";
-        int[] results = {0,0,0,0,0};
+        //int[] results = {0,0,0,0,0};
         try {
             Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
             Elements eleCity = elements.get(2).children().get(0).children().get(0).children().get(1).children().get(1).children();
-
+//            results = new int[]{0, 0, 0, 0, 0};
             for(Element element:eleCity) {
                 Elements tdsElements = element.select("td");
                 String nameString = tdsElements.get(0).text().trim();
@@ -54,7 +79,7 @@ public class WebSpider {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             Log.v(TAG, "!"+e.toString());
-            return null;
+            return new int[]{0, 0, 0, 0, 0};
         }
         return results;
 

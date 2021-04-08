@@ -315,8 +315,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public void loadNewestList(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
         StrictMode.setThreadPolicy(policy);
+        int [] DEFAULT = {0, 0, 0, 0, 0};
+        if(WebSpider.getResults() == null){
+            loadCityList();
+            return;
+        }
         int[] newFourteenCases = WebSpider.getForteenCases();
         if(newFourteenCases == null){
             loadCityList();
