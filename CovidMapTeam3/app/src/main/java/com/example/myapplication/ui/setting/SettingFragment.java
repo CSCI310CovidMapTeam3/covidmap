@@ -141,11 +141,14 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         );
 
         // show storage size
-        File appBaseFolder = this.getContext().getFilesDir().getParentFile();
-        long totalSize = browseFiles(appBaseFolder);
+        // File appBaseFolder = this.getContext().getFilesDir().getParentFile();
+        // long totalSize = browseFiles(appBaseFolder);
+        // storageSize.setText("Storage Size: " + totalSize + " total bytes.");
         TextView storageSize = root.findViewById(R.id.text_storage);
-        storageSize.setText("Storage Size: " + totalSize + " total bytes.");
-
+        String storageInfo = "" + "Storage Size: " +
+                getStorageSize() +
+                " MB.";
+        storageSize.setText(storageInfo);
         return root;
     }
 
@@ -174,4 +177,35 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         }
         return dirSize;
     }
+
+    public long getStorageSize() {
+        return getFileDataSize() + getFolderSize();
+    }
+
+    // Return File Size in MB
+    public long getFileDataSize() {
+        long size = 0;
+        File filedir = this.getContext().getFilesDir().getParentFile();
+        for (File fdir : filedir.listFiles()) {
+            if (fdir.isDirectory()) {
+                long dirfiles = browseFiles(fdir);
+                size += dirfiles;
+            } else {
+                size += fdir.length();
+            }
+        }
+        return size / (1024 * 1024);
+    }
+
+    // Return APP Size in MB
+    public long getFolderSize() {
+        try {
+            long appsize = new File(getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), 0).sourceDir).length();
+            return appsize / (1024 * 1024);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }
+
+
