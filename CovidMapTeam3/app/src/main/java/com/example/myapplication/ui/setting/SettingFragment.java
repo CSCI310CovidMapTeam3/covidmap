@@ -126,9 +126,12 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                     NotificationChannel channel = new NotificationChannel("my_channel_1", name, importance);
                     channel.setDescription(description);
 
+                    NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+                    notificationManager.createNotificationChannel(channel);
+
                     PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
 
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity(), "my_channel_1")
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "my_channel_1")
                             .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                             .setContentTitle("COVID-19 NOTIFICATION")
                             .setContentText("This is a test notification!")
@@ -136,7 +139,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                             .setContentIntent(pendingIntent)
                             .setAutoCancel(true);
 
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getActivity());
+                    // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
                     // notificationId is a unique int for each notification that you must define
                     notificationManager.notify(1, builder.build());
                 }
