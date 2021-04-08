@@ -125,8 +125,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         root.findViewById(R.id.my_location).setOnClickListener(v -> {
             if (lastKnownLocation != null) {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(lastKnownLocation.getLatitude(),
-                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                        new LatLng(34.0522, -118.2437), DEFAULT_ZOOM));
+//                        new LatLng(lastKnownLocation.getLatitude(),
+//                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
             }
         });
 
