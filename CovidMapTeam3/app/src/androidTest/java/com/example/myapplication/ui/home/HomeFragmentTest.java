@@ -228,7 +228,7 @@ public class HomeFragmentTest {
                 "14-Day Case Rate: 251",testName1);
         String testcityName2 = "Seattle";
         String testName2 = homeFragment.getSnippetByCityName(testcityName2);
-        assertEquals( testcityName2+NOTFOUND, testName2);
+        assertEquals( testcityName2, testName2);
     }
 
     // White Box Test Case No. 18

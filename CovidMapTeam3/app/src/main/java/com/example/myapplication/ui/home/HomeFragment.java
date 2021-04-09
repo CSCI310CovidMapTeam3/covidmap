@@ -311,7 +311,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         cities.add(beverlyHills);
         City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, 2194, 35, 0, 78);
         cities.add(westHollywood);
-        City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 3979576, 492519, 9154, 0, 10017);
+        City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 3935, 51, 0, 10017);
         cities.add(losAngelesCity);
 
         City chernobyl = new City("Chernobyl");
@@ -361,7 +361,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             cities.add(beverlyHills);
             City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, 2194, 35, 0, newFourteenCases[3]);
             cities.add(westHollywood);
-            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 3979576, 492519, 9154, 0, newFourteenCases[4]);
+            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 	3935, 9154, 0, newFourteenCases[4]);
             cities.add(losAngelesCity);
 
             City chernobyl = new City("Chernobyl");
