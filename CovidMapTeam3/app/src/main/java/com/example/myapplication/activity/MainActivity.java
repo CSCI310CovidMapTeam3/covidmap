@@ -1,6 +1,8 @@
 package com.example.myapplication.activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.myapplication.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+
+        /*Button button_back_to_LA =  findViewById(R.id.my_location);
+        if(button_back_to_LA != null) {
+            button_back_to_LA.setVisibility(View.INVISIBLE);
+        }*/
     }
 
     public interface OnBackListener {

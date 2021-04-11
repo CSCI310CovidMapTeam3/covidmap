@@ -68,6 +68,8 @@
         android:layout_marginEnd="255dp"
         android:layout_marginRight="255dp"
         android:layout_marginBottom="126dp"
+
+        android:visibility="invisible"
         />
 
     <Button

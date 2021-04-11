@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,6 +91,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     ArrayList<City> cities;
     private boolean lastKnownLocationInLA = true;
 
+    private Button backLA;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -136,6 +139,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         });
 
         loadNewestList();
+
+        backLA = root.findViewById(R.id.my_location);
         return root;
     }
 
@@ -516,10 +521,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 if (checkInLACounty() != -1){
                                     lastKnownLocationInLA = true;
                                     sharedViewModel.setCountyData("Los Angeles County");
+
+                                    backLA.setVisibility(View.INVISIBLE);
                                 }
                                 else if (lastKnownLocationInLA){
                                     lastKnownLocationInLA = false;
                                     sharedViewModel.setCountyData("Not in Los Angeles County");
+
+                                    backLA.setVisibility(View.VISIBLE);
+
                                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                     alertDialogBuilder.setTitle("Friendly Warning");
                                     alertDialogBuilder.setMessage("Out of Los Angeles County \n(Current Service Area)");
