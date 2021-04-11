@@ -327,12 +327,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         int [] DEFAULT = {0, 0, 0, 0, 0};
-        if(WebSpider.getResults() == null){
+        if(WebSpider.getResults() == null || WebSpider.getTotalResults() == null){
             loadCityList();
             return;
         }
         int[] newFourteenCases = WebSpider.getForteenCases();
-        if(newFourteenCases == null){
+        int[] newTotalCases = WebSpider.getTotalCases();
+        if(newFourteenCases == null || newTotalCases == null){
             loadCityList();
         }else{
             cities = new ArrayList<City>();
@@ -358,15 +359,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             losAngelesCityCityCenter.setLatitude(34.0522);
             losAngelesCityCityCenter.setLongitude(-118.2437);
 
-            City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, 4515, 156, 0, newFourteenCases[0]);
+            City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, newTotalCases[0], 156, 0, newFourteenCases[0]);
             cities.add(santaMonica);
-            City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, 2131, 96, 0, newFourteenCases[1]);
+            City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, newTotalCases[1], 96, 0, newFourteenCases[1]);
             cities.add(culverCity);
-            City beverlyHills = new City("Beverly Hills", 3, beverlyHillsCityCenter, 34186, 2566, 34, 0, newFourteenCases[2]);
+            City beverlyHills = new City("Beverly Hills", 3, beverlyHillsCityCenter, 34186, newTotalCases[2], 34, 0, newFourteenCases[2]);
             cities.add(beverlyHills);
-            City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, 2194, 35, 0, newFourteenCases[3]);
+            City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, newTotalCases[3], 35, 0, newFourteenCases[3]);
             cities.add(westHollywood);
-            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 	3935, 9154, 0, newFourteenCases[4]);
+            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 	newTotalCases[4], 9154, 0, newFourteenCases[4]);
             cities.add(losAngelesCity);
 
             City chernobyl = new City("Chernobyl");
