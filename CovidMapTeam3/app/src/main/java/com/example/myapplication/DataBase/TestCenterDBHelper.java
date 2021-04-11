@@ -107,6 +107,10 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
                 "Pasadena\n");
         this.addTestCenter("DPH – Monrovia Health Center\n",34.1412157 ,-118.0082174, "330 W Maple Avenue\n" +
                 "Monrovia\n");
+        this.addTestCenter("Santa Monica College\n", 34.0128839,-118.4345706, "2800 Airport Avenue\n" +
+                "Santa Monica");
+        this.addTestCenter("Plummer Park",34.0914681 ,-118.3530227, "7377 Santa Monica Boulevard\n" +
+                "West Hollywood");
         //this.addTestCenter("", ,-, "");
     }
 
