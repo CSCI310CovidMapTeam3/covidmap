@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -94,6 +95,8 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
             captureScreen();
         });
 
+        ImageView severityScale = root.findViewById(R.id.imageView2);
+        severityScale.setVisibility(View.INVISIBLE);
         return root;
     }
 
