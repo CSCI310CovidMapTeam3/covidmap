@@ -141,6 +141,7 @@
         app:layout_constraintTop_toBottomOf="@+id/dark_btn"
         app:layout_constraintVertical_bias="0.0" />
 
+    <!--
     <Button
         android:id="@+id/button2"
         android:layout_width="350dp"
@@ -157,6 +158,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notification_btn"
         app:layout_constraintVertical_bias="0.0" />
+        -->
 
     <TextView
         android:id="@+id/text_storage"
