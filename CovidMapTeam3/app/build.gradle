@@ -42,6 +42,13 @@ android {
 }
 
 dependencies {
+    def work_version = "2.5.0"
+    // (Java only)
+    implementation "androidx.work:work-runtime:$work_version"
+
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation files('libs/jsoup-1.13.1.jar')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
