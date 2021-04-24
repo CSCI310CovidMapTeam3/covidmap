@@ -26,6 +26,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
@@ -33,6 +36,7 @@ import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.activity.Recorder;
 import com.example.myapplication.ui.setting.SettingViewModel;
 import com.example.myapplication.ui.tracking.TrackingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -321,6 +325,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         City chernobyl = new City("Chernobyl");
         cities.add(chernobyl);
+
+        WorkRequest uploadWorkRequest =
+                new OneTimeWorkRequest.Builder(Recorder.class)
+                        .build();
+        WorkManager
+                .getInstance(requireContext())
+                .enqueue(uploadWorkRequest);
     }
 
     public void loadNewestList(){
@@ -335,7 +346,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         int[] newTotalCases = WebSpider.getTotalCases();
         if(newFourteenCases == null || newTotalCases == null){
             loadCityList();
-        }else{
+        } else{
             cities = new ArrayList<City>();
 
             Location santaMonicaCityCenter = new Location("");

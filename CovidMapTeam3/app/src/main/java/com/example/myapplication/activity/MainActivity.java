@@ -12,6 +12,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
         if(button_back_to_LA != null) {
             button_back_to_LA.setVisibility(View.INVISIBLE);
         }*/
+
+        // https://medium.com/@yonatanvlevin/the-minimum-interval-for-periodicwork-is-15-minutes-same-as-jobscheduler-periodic-job-eb2d63716d1f Interval
+        PeriodicWorkRequest saveRequest =
+                new PeriodicWorkRequest.Builder(Recorder.class, 15, TimeUnit.MINUTES)
+                        // Constraints
+                        .build();
+
+        WorkManager.getInstance(getApplicationContext()).enqueue(saveRequest);
     }
 
     public interface OnBackListener {
