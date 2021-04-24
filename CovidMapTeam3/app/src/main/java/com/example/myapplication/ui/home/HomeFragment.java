@@ -331,7 +331,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             loadCityList();
             return;
         }
-        int[] newFourteenCases = WebSpider.getForteenCases();
+        int[] newFourteenCases = WebSpider.getVaccinated();
         int[] newTotalCases = WebSpider.getTotalCases();
         if(newFourteenCases == null || newTotalCases == null){
             loadCityList();

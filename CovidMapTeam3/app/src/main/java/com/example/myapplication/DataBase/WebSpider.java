@@ -49,7 +49,7 @@ public class WebSpider {
         String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm";
         //int[] results = {0,0,0,0,0};
         try {
-            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").timeout(3000).execute();
+            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
             Elements eleCity = elements.get(0).children().get(0).children().get(0).children().get(1).children().get(1).children();
@@ -78,11 +78,11 @@ public class WebSpider {
                     totalResults[4]=Integer.parseInt(forteen);
                 }
             }
-            Log.v(TAG, String.valueOf(totalResults));
+            Log.v(TAG, totalResults.toString());
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            Log.v(TAG, "!"+e.toString());
+            Log.v(TAG, "getTotalCases!"+e.toString());
             return new int[]{0, 0, 0, 0, 0};
         }
         return totalResults;
@@ -90,16 +90,17 @@ public class WebSpider {
     }
 
 
-    public static int[] getForteenCases(){
+    public static int[] getVaccinated(){
 
         // String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm#case-summary";
         String baseURL = "http://publichealth.lacounty.gov/media/coronavirus/locations.htm";
         //int[] results = {0,0,0,0,0};
         try {
-            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").timeout(3000).execute();
+            Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
-            Elements eleCity = elements.get(2).children().get(0).children().get(0).children().get(1).children().get(1).children();
+            Elements eleCity = elements.get(1).children().get(0).children().get(0).children().get(1).children().get(1).children();
+            Log.v(TAG, "getVaccinated-");
 //            results = new int[]{0, 0, 0, 0, 0};
             for(Element element:eleCity) {
                 Elements tdsElements = element.select("td");
@@ -125,11 +126,11 @@ public class WebSpider {
                     results[4]=Integer.parseInt(forteen);
                 }
             }
-            Log.v(TAG, String.valueOf(results));
+            Log.v(TAG, results.toString());
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            Log.v(TAG, "!"+e.toString());
+            Log.v(TAG, "getVaccinated-"+e.toString());
             return new int[]{0, 0, 0, 0, 0};
         }
         return results;
