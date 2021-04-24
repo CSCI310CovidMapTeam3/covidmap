@@ -105,10 +105,6 @@ public class TrackingFragment extends Fragment {
 
                         });
 
-//        TextView travelHistory = root.findViewById(R.id.travel_history);
-//        String history = "On " + dateSelected + ", you have been to dummy city Los Angeles";
-//        travelHistory.setText(history);
-
         return root;
     }
 }
