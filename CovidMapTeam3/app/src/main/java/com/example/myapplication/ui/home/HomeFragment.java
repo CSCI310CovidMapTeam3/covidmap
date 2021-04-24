@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +51,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -285,7 +288,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             losAngeles.showInfoWindow();
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(losAngelesLatLng)); // Position on Santa Monica
         }
+
+        loadTravelTracking();
+
+        WorkRequest uploadWorkRequest =
+                new OneTimeWorkRequest.Builder(Recorder.class)
+                        .build();
+        WorkManager
+                .getInstance(getContext())
+                .enqueue(uploadWorkRequest);
     }
+
+    private void loadTravelTracking(){
+        LatLng USCLatlng = new LatLng(34.0224, -118.2851);
+        LatLng SMCLatlng = new LatLng(34.0166,  -118.4704);
+        LatLng UCLALatlng = new LatLng(34.0689, -118.4452); // sucks
+        Polyline line = map.addPolyline(new PolylineOptions()
+                .add(USCLatlng, SMCLatlng, UCLALatlng)
+                .width(10)
+                .color(Color.RED));
+    }
+
+
 
     // load default List
     public void loadCityList(){
@@ -326,12 +350,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         City chernobyl = new City("Chernobyl");
         cities.add(chernobyl);
 
-        WorkRequest uploadWorkRequest =
-                new OneTimeWorkRequest.Builder(Recorder.class)
-                        .build();
-        WorkManager
-                .getInstance(requireContext())
-                .enqueue(uploadWorkRequest);
     }
 
     public void loadNewestList(){

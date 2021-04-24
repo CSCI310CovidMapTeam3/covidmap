@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         // https://medium.com/@yonatanvlevin/the-minimum-interval-for-periodicwork-is-15-minutes-same-as-jobscheduler-periodic-job-eb2d63716d1f Interval
         PeriodicWorkRequest saveRequest =
-                new PeriodicWorkRequest.Builder(Recorder.class, 15, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(Recorder.class, 15, TimeUnit.MINUTES).addTag("Periodic")
                         // Constraints
                         .build();
 

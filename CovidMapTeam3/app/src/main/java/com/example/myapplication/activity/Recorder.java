@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +25,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Recorder extends Worker {
 
@@ -32,7 +37,8 @@ public class Recorder extends Worker {
     private Context mContext;
     private Location mLocation;
     private LocationCallback mLocationCallback;
-
+    private Geocoder mGeocoder;
+    private String mCity = "Los Angeles County";
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
@@ -75,6 +81,29 @@ public class Recorder extends Worker {
                             if (task.isSuccessful() && task.getResult() != null) {
                                 mLocation = task.getResult();
                                 Log.d(TAG, "Location : " + mLocation);
+
+
+                                mGeocoder = new Geocoder(mContext);
+
+                                try {
+                                    List<Address> addresses = mGeocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
+                                    if (addresses.get(0) != null){
+                                        if(addresses.get(0).getLocality() != null){
+                                            mCity = addresses.get(0).getLocality();
+                                            Log.d(TAG, "Geocoder: City Changed to . " + mCity);
+                                        }
+                                        else{
+                                            Log.d(TAG, "Geocoder: Locality Null. " + mCity);
+                                        }
+                                    } else{
+                                        Log.d(TAG, "Geocoder: Address Null. " + mCity);
+                                    }
+                                } catch (IOException e) {
+                                    Log.e(TAG, "Geocoder: Exception during Geocoder. " + e);
+                                    e.printStackTrace();
+                                }
+                                Log.d(TAG, "Geocoder: Current City to . " + mCity);
+
                                 mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                             } else {
                                 Log.w(TAG, "Failed to get location.");
@@ -83,6 +112,7 @@ public class Recorder extends Worker {
                     });
         } catch (SecurityException unlikely) {
             Log.e(TAG, "Lost location permission." + unlikely);
+            return Result.failure();
         }
 
         try {
@@ -90,9 +120,13 @@ public class Recorder extends Worker {
         } catch (SecurityException unlikely) {
             //Utils.setRequestingLocationUpdates(this, false);
             Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
+            return Result.failure();
         } catch (Exception e) {
             Log.e(TAG, "Exception. " + e);
+            return Result.failure();
         }
+
+
         return Result.success();
     }
 
