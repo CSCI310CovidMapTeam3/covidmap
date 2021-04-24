@@ -45,6 +45,16 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/travel_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="450dp"
+            android:layout_marginRight="10dp"
+            android:text="Click on date above to show travel history." />
+
     </RelativeLayout>
 
 

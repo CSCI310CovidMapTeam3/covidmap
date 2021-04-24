@@ -19,13 +19,16 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.home.SharedViewModel;
 
+import org.w3c.dom.Text;
+
 public class TrackingFragment extends Fragment {
 
     private static final String TAG = "TrackingFragment";
     private TrackingViewModel trackingViewModel;
     private SharedViewModel sharedViewModel;
-    CalendarView calender;
+    CalendarView calendar;
     TextView date_view;
+    String dateSelected;
 
     private String currentCounty = "Los Angeles County";
 
@@ -61,13 +64,13 @@ public class TrackingFragment extends Fragment {
             }
         });
 
-        calender = (CalendarView)
+        calendar = (CalendarView)
                 root.findViewById(R.id.calender);
         date_view = (TextView)
                 root.findViewById(R.id.date_view);
 
         // Add Listener in calendar
-        calender
+        calendar
                 .setOnDateChangeListener(
                         new CalendarView
                                 .OnDateChangeListener() {
@@ -87,14 +90,24 @@ public class TrackingFragment extends Fragment {
                                 // format in String type Variable
                                 // Add 1 in month because month
                                 // index is start with 0
-                                String Date
-                                        = dayOfMonth + "-"
-                                        + (month + 1) + "-" + year;
+                                dateSelected
+                                        = dayOfMonth + "/"
+                                        + (month + 1) + "/" + year;
 
                                 // set this date in TextView for Display
-                                date_view.setText(Date);
+                                date_view.setText(dateSelected);
+
+                                TextView travelHistory = root.findViewById(R.id.travel_history);
+                                String history = "On " + dateSelected + ", you have been to dummy city Los Angeles";
+                                travelHistory.setText(history);
                             }
+
+
                         });
+
+//        TextView travelHistory = root.findViewById(R.id.travel_history);
+//        String history = "On " + dateSelected + ", you have been to dummy city Los Angeles";
+//        travelHistory.setText(history);
 
         return root;
     }
