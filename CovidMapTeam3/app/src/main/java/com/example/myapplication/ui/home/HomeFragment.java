@@ -646,8 +646,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private int checkInLACounty(){ // 1 means in LA, 0 means location unknown, -1 means not in LA
         if (lastKnownLocation != null) {
-            if (lastKnownLocation.getLatitude() > 33.5 &&  lastKnownLocation.getLatitude() < 34.1){
-                if (lastKnownLocation.getLongitude() > -118.6 && lastKnownLocation.getLongitude() < -118){
+            if (lastKnownLocation.getLatitude() > 33.5 &&  lastKnownLocation.getLatitude() < 34.8){
+                if (lastKnownLocation.getLongitude() > -118.9 && lastKnownLocation.getLongitude() < -117.6){
                     Log.d(TAG, "checkInLACounty: In LA");
                     return 1;
                 }
