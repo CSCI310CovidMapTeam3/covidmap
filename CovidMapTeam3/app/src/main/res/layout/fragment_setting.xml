@@ -141,7 +141,6 @@
         app:layout_constraintTop_toBottomOf="@+id/dark_btn"
         app:layout_constraintVertical_bias="0.0" />
 
-    <!--
     <Button
         android:id="@+id/button2"
         android:layout_width="350dp"
@@ -151,14 +150,13 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="68dp"
         android:layout_marginRight="68dp"
-        android:text="delete all downloaded data"
+        android:text="Test Travel Tracking Record"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notification_btn"
         app:layout_constraintVertical_bias="0.0" />
-        -->
 
     <TextView
         android:id="@+id/text_storage"

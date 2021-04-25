@@ -17,15 +17,24 @@ import androidx.work.ListenableWorker;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.TestCenter;
+import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +113,13 @@ public class Recorder extends Worker {
                                 }
                                 Log.d(TAG, "Geocoder: Current City to . " + mCity);
 
+
+                                // Record
+                                HistoryDBHelper inst = HistoryDBHelper.getInstance(mContext);
+                                Date date = new Date();
+                                System.out.println(new Timestamp(date.getTime()));
+                                inst.addHistoryItem(mCity, mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                // new Timestamp(today.getTime());
                                 mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                             } else {
                                 Log.w(TAG, "Failed to get location.");

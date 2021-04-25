@@ -64,9 +64,12 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -259,7 +262,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
 
-        // HistoryDBHelper test field
+        /* HistoryDBHelper test field
         HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
         inst1.initTestCenter();
 
@@ -274,8 +277,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         for(HistoryItem temp1 : testList2){
             Log.v(TAG, temp1.getCityName());
         }
+        * end of test field
+        */
 
-        //end of test field
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -312,20 +316,52 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         loadTravelTracking();
 
+        /*
         WorkRequest uploadWorkRequest =
                 new OneTimeWorkRequest.Builder(Recorder.class)
                         .build();
         WorkManager
                 .getInstance(getContext())
                 .enqueue(uploadWorkRequest);
+         */
     }
 
     private void loadTravelTracking(){
-        LatLng USCLatlng = new LatLng(34.0224, -118.2851);
-        LatLng SMCLatlng = new LatLng(34.0166,  -118.4704);
-        LatLng UCLALatlng = new LatLng(34.0689, -118.4452); // sucks
+        //LatLng USCLatlng = new LatLng(34.0224, -118.2851);
+        //LatLng SMCLatlng = new LatLng(34.0166,  -118.4704);
+        // LatLng UCLALatlng = new LatLng(34.0689, -118.4452); // sucks
+
+        ArrayList<LatLng> LatLngs = new ArrayList<LatLng>();
+
+        HistoryDBHelper inst = HistoryDBHelper.getInstance(getContext());
+        // SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US);
+        // String simpleDate = "24-04-2021 08:00:00";
+        try {
+            Timestamp ts = Timestamp.valueOf("2021-04-24 09:00:27.627");
+            Date date =new Date(ts.getTime());
+            Log.d(TAG, date.toString());
+            // ArrayList<HistoryItem> historyItems = inst.retrieveByDate(date);
+            ArrayList<HistoryItem> historyItems = inst.getAllListHistory();
+            int count = 0;
+            Timestamp lastTimeStamp = new Timestamp(0);
+            for (HistoryItem historyItem : historyItems){
+                Log.d(TAG, historyItem.toString() + count);
+                Timestamp currentTimeStamp = historyItem.getTimestamp();
+                // Ensure that two time stamps are 10 minutes away from each other.
+                if (currentTimeStamp.getTime() - lastTimeStamp.getTime() > 1000 * 60 * 10){
+                    LatLngs.add(new LatLng(historyItem.getLat(), historyItem.getLon()));
+                    lastTimeStamp = currentTimeStamp;
+                }
+                count++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "Load Travel Tracking Date Error");
+        }
+
         Polyline line = map.addPolyline(new PolylineOptions()
-                .add(USCLatlng, SMCLatlng, UCLALatlng)
+                .addAll(LatLngs)
                 .width(10)
                 .color(Color.RED));
     }
@@ -456,12 +492,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 sb.append("Death: ");
                 sb.append(city.getDeathNumber());
                 sb.append("\n");
-                sb.append("14-Day Case: ");
+                sb.append("Vaccinated Number: ");
                 sb.append(city.getFourteenDayCaseNumber());
                 sb.append("\n");
-                sb.append("14-Day Case Rate: ");
+                sb.append("Vaccinated Rate: ");
                 try {
-                    sb.append((int)city.getNewCaseRate());
+                    sb.append((int) (city.getNewCaseRate()/1000));
+                    sb.append('%');
                 } catch (IllegalStateException ise){
                     sb.append("--- No Population Data ---");
                 } catch (Exception e){

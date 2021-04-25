@@ -32,12 +32,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.example.myapplication.DataBase.HistoryDBHelper;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.AboutActivity;
+import com.example.myapplication.activity.Recorder;
 import com.example.myapplication.ui.home.SharedViewModel;
 
 import java.io.File;
@@ -117,6 +121,17 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
             alertDialogBuilder.setMessage("All your data has been deleted!");
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show(); // Show Dialog
+        });
+
+        // test record
+        root.findViewById(R.id.button2).setOnClickListener(v -> {
+            WorkRequest uploadWorkRequest =
+                    new OneTimeWorkRequest.Builder(Recorder.class)
+                            .build();
+            WorkManager
+                    .getInstance(getContext())
+                    .enqueue(uploadWorkRequest);
+            Log.d("Setting Fragment", "On Test Record: ");
         });
 
         // send a notification button

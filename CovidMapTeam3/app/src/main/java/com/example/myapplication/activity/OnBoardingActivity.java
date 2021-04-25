@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.myapplication.DataBase.HistoryDBHelper;
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.OnBoardingPageAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -66,5 +67,8 @@ public class OnBoardingActivity extends AppCompatActivity {
                 }
             }
         });
+
+        HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getApplicationContext());
+        inst1.initSimpleTravelHistory();
     }
 }

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.sql.Timestamp;
@@ -55,7 +54,6 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
                 "long DOUBLE,"+
                 "timestamp TIMESTAMP"+
                 ")");
-
     }
 
     @Override
@@ -102,15 +100,17 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
         //db.execSQL("DROP " + DATABASE_NAME);
     }
 
-    public void initTestCenter(){
-        Log.v(TAG, "Start method initTestCenter");
-        addHistoryItem("LA1", 12.32, 415.23, Timestamp.valueOf("2020-04-23 13:19:27.627"));
-        addHistoryItem("LA2", 13.32, 413.23, Timestamp.valueOf("2021-03-23 13:19:27.627"));
-        addHistoryItem("LA3", 14.32, 411.23, Timestamp.valueOf("2021-04-11 13:19:27.627"));
-        addHistoryItem("LA4", 122.32, 41.23, Timestamp.valueOf("2021-04-12 13:19:27.627"));
-        addHistoryItem("LA5", 122.32, 41.23, Timestamp.valueOf("2021-04-12 13:19:27.627"));
-        addHistoryItem("LA6", 122.32, 41.23, Timestamp.valueOf("2021-04-22 13:19:27.627"));
-        addHistoryItem("LA7", 122.32, 41.23, new Timestamp(System.currentTimeMillis()));
+    public void initSimpleTravelHistory(){
+        Log.v(TAG, "Start method initSimpleTravelHistory");
+        addHistoryItem("Los Angeles (Parkside)", 34.0189, -118.2909, Timestamp.valueOf("2020-04-24 07:30:12.345"));
+        addHistoryItem("Los Angeles (Lorenzo)", 34.0289, -118.2729, Timestamp.valueOf("2020-04-24 08:00:12.345"));
+        addHistoryItem("Los Angeles (Starbucks)", 34.0251, -118.4592, Timestamp.valueOf("2021-04-24 08:30:12.345"));
+        addHistoryItem("Los Angeles (SMC)", 34.0171, -118.47, Timestamp.valueOf("2021-04-24 09:00:27.627"));
+        addHistoryItem("Los Angeles (K-Town)", 34.0620, -118.3026, Timestamp.valueOf("2021-04-24 18:00:27.627"));
+        addHistoryItem("Los Angeles (Figueroa)", 34.0249, -118.2787, Timestamp.valueOf("2021-04-24 19:00:27.627"));
+        addHistoryItem("Los Angeles (Lorenzo)", 34.0289, -118.2729, Timestamp.valueOf("2021-04-24 20:00:27.627"));
+        addHistoryItem("Los Angeles (Parkside)", 34.0289, -118.2729, Timestamp.valueOf("2021-04-24 21:00:27.627"));
+        addHistoryItem("Los Angeles (Coliseum)", 34.0143, -118.2878, new Timestamp(System.currentTimeMillis()));
     }
 
     /*
@@ -122,7 +122,7 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
             int date)
      */
 
-    public ArrayList<HistoryItem>  retrieveByDate(Date day){
+    public ArrayList<HistoryItem> retrieveByDate(Date day){
         Log.v(TAG, "Start method retrieveByDate");
         ArrayList<HistoryItem> HistoryItems = new ArrayList<HistoryItem>();
         SQLiteDatabase db = ts.getReadableDatabase();

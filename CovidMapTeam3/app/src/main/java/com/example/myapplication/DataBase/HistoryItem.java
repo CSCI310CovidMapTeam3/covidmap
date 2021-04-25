@@ -29,4 +29,15 @@ public class HistoryItem {
     public Timestamp getTimestamp() {
         return timestamp;
     }
+
+
+    @Override
+    public String toString() {
+        return "HistoryItem{" +
+                "cityName='" + cityName + '\'' +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
