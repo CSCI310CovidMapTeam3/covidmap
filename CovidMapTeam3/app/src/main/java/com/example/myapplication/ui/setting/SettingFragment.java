@@ -33,6 +33,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.AboutActivity;
@@ -108,6 +110,8 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         // clear data button
         root.findViewById(R.id.clear_btn).setOnClickListener(v -> {
             WebSpider.clearData();
+            HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
+            inst1.clear();
             AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());
             alertDialogBuilder.setTitle("Clear All Data");
             alertDialogBuilder.setMessage("All your data has been deleted!");

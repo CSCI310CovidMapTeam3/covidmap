@@ -32,6 +32,8 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import com.example.myapplication.BuildConfig;
+import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.HistoryItem;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.activity.AboutActivity;
@@ -61,6 +63,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,7 +73,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private HomeViewModel homeViewModel;
 
-    private static final String TAG = MapsActivity.class.getSimpleName();
+    private static final String TAG = "HomeFragment";
 
     private GoogleMap map;
     private CameraPosition cameraPosition;
@@ -255,6 +258,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(34.0224, -118.2852))); // Position on USC
 
         TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
+
+        // HistoryDBHelper test field
+        HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
+        inst1.initTestCenter();
+
+        Log.v(TAG, "try to get all");
+        ArrayList<HistoryItem> testList = inst1.getAllListHistory();
+        for(HistoryItem temp1 : testList){
+            Log.v(TAG, temp1.getCityName());
+        }
+
+        Log.v(TAG, "try to get today");
+        ArrayList<HistoryItem> testList2 = inst1.retrieveByDate(new Date());
+        for(HistoryItem temp1 : testList2){
+            Log.v(TAG, temp1.getCityName());
+        }
+
+        //end of test field
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override

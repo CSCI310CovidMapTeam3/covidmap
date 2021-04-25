@@ -38,6 +38,11 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onConfigure(SQLiteDatabase db){
+        db.execSQL("PRAGMA key = 'secretkey'");
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table testCenter (" +
                 "name TEXT," +
