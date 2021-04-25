@@ -19,16 +19,16 @@
             android:id="@+id/date_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="150dp"
+            android:layout_marginLeft="70dp"
             android:layout_marginTop="20dp"
-            android:text="Set the Date"
+            android:text="Click on the date below to select any date!"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
 
         <!-- Add CalenderView to display the Calender -->
         <CalendarView
             android:id="@+id/calender"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="60dp"
             android:layout_marginLeft="19dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -46,14 +46,22 @@
             android:layout_marginBottom="4dp"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/travel_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <TableLayout
+            android:id="@+id/tracking_table"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="450dp"
-            android:layout_marginRight="10dp"
-            android:text="Click on date above to show travel history." />
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="400dp">
+
+            <TableRow
+                android:id="@+id/tracking_row"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </TableLayout>
+
 
     </RelativeLayout>
 

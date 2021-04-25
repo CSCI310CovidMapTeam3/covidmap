@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -97,12 +99,28 @@ public class TrackingFragment extends Fragment {
                                 // set this date in TextView for Display
                                 date_view.setText(dateSelected);
 
-                                TextView travelHistory = root.findViewById(R.id.travel_history);
-                                String history = "On " + dateSelected + ", you have been to dummy city Los Angeles";
-                                travelHistory.setText(history);
+                                // fill the tracking table
+                                TableLayout tl = (TableLayout) root.findViewById(R.id.tracking_table); // tracking history table
+                                tl.removeAllViews();
+
+                                String title = "name, latitude, longitude, time";
+                                TableRow titleRow = new TableRow(getContext());
+                                TextView titleText = new TextView(getContext());
+                                titleText.setText(title);
+                                titleRow.addView(titleText);
+                                tl.addView(titleRow,0);
+
+                                for (int i=0; i<2; i++){
+                                    TableRow tr = new TableRow(getContext());
+                                    TextView tv = new TextView(getContext());
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append("This is history ");
+                                    sb.append(i + 1);
+                                    tv.setText(sb.toString());
+                                    tr.addView(tv);
+                                    tl.addView(tr,i+1);
+                                }
                             }
-
-
                         });
 
         return root;
