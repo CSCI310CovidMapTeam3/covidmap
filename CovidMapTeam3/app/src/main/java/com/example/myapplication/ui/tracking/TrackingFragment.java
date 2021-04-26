@@ -18,10 +18,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.HistoryItem;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.home.SharedViewModel;
 
 import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class TrackingFragment extends Fragment {
 
@@ -92,12 +99,26 @@ public class TrackingFragment extends Fragment {
                                 // format in String type Variable
                                 // Add 1 in month because month
                                 // index is start with 0
-                                dateSelected
-                                        = dayOfMonth + "/"
-                                        + (month + 1) + "/" + year;
+                                StringBuilder sbDate = new StringBuilder();
+                                if (dayOfMonth < 10){
+                                    sbDate.append(0);
+                                }
+                                sbDate.append(dayOfMonth);
+                                sbDate.append("/");
+                                if (month < 10){
+                                    sbDate.append(0);
+                                }
+                                sbDate.append(month + 1);
+                                sbDate.append("/");
+                                sbDate.append(year);
+                                dateSelected = sbDate.toString();
 
                                 // set this date in TextView for Display
                                 date_view.setText(dateSelected);
+
+                                // change the prompt
+                                TextView prompt = (TextView) root.findViewById(R.id.prompt);
+                                prompt.setText("Scroll down to view all history.");
 
                                 // fill the tracking table
                                 TableLayout tl = (TableLayout) root.findViewById(R.id.tracking_table); // tracking history table
@@ -110,15 +131,35 @@ public class TrackingFragment extends Fragment {
                                 titleRow.addView(titleText);
                                 tl.addView(titleRow,0);
 
-                                for (int i=0; i<2; i++){
+                                ArrayList<String> historyList = new ArrayList<>(); // history on that date
+                                HistoryDBHelper history = HistoryDBHelper.getInstance(getContext()); // get history class
+                                ArrayList<HistoryItem> historyFromAllDates = history.getAllListHistory(); // all history
+
+                                for (HistoryItem hi : historyFromAllDates){
+                                    Date tempDate = hi.getTimestamp();
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                    String string  = dateFormat.format(tempDate);
+                                    if (string.equals(dateSelected)){ // if equal
+
+                                        StringBuilder sb = new StringBuilder();
+                                        sb.append(hi.getCityName());
+                                        sb.append(", ");
+                                        sb.append(hi.getLat());
+                                        sb.append(", ");
+                                        sb.append(hi.getLon());
+                                        sb.append(", ");
+                                        sb.append(hi.getTimestamp().toString());
+                                        historyList.add(sb.toString());
+                                    }
+                                }
+
+                                int i=0;
+                                for (String s : historyList){
                                     TableRow tr = new TableRow(getContext());
                                     TextView tv = new TextView(getContext());
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.append("This is history ");
-                                    sb.append(i + 1);
-                                    tv.setText(sb.toString());
+                                    tv.setText(s);
                                     tr.addView(tv);
-                                    tl.addView(tr,i+1);
+                                    tl.addView(tr,++i);
                                 }
                             }
                         });

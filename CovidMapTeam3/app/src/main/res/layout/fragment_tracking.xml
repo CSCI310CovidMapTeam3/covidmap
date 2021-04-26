@@ -46,21 +46,40 @@
             android:layout_marginBottom="4dp"
             android:textSize="20sp" />
 
-        <TableLayout
-            android:id="@+id/tracking_table"
+        <ScrollView
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:layout_marginTop="400dp"
+            android:layout_marginBottom="100dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="400dp">
+            android:scrollbars="vertical">
 
-            <TableRow
-                android:id="@+id/tracking_row"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </TableLayout>
+                android:layout_height="match_parent">
+
+                <TableLayout
+                    android:id="@+id/tracking_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TableRow
+                        android:id="@+id/tracking_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </TableLayout>
+            </HorizontalScrollView>
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="375dp"
+            android:layout_marginRight="30dp"
+            android:text="Click on any date to show tracking history!" />
 
 
     </RelativeLayout>
