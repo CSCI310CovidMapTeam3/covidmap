@@ -102,10 +102,10 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
 
     public void initSimpleTravelHistory(){
         Log.v(TAG, "Start method initSimpleTravelHistory");
-        addHistoryItem("Los Angeles (Parkside)", 34.0189, -118.2909, Timestamp.valueOf("2020-04-24 07:30:12.345"));
-        addHistoryItem("Los Angeles (Lorenzo)", 34.0289, -118.2729, Timestamp.valueOf("2020-04-24 08:00:12.345"));
-        addHistoryItem("Los Angeles (Starbucks)", 34.0251, -118.4592, Timestamp.valueOf("2021-04-24 08:30:12.345"));
-        addHistoryItem("Los Angeles (SMC)", 34.0171, -118.47, Timestamp.valueOf("2021-04-24 09:00:27.627"));
+        addHistoryItem("Los Angeles (Tommy's)", 34.0695, -118.2763, Timestamp.valueOf("2021-04-24 01:10:10.345"));
+        addHistoryItem("Los Angeles (Village)", 34.0255, -118.2849, Timestamp.valueOf("2021-04-24 08:10:12.345"));
+        addHistoryItem("Santa Monica (Starbucks)", 34.0251, -118.4592, Timestamp.valueOf("2021-04-24 08:30:12.345"));
+        addHistoryItem("Santa Monica (SMC)", 34.0171, -118.47, Timestamp.valueOf("2021-04-24 09:00:27.627"));
         addHistoryItem("Los Angeles (K-Town)", 34.0620, -118.3026, Timestamp.valueOf("2021-04-24 18:00:27.627"));
         addHistoryItem("Los Angeles (Figueroa)", 34.0249, -118.2787, Timestamp.valueOf("2021-04-24 19:00:27.627"));
         addHistoryItem("Los Angeles (Lorenzo)", 34.0289, -118.2729, Timestamp.valueOf("2021-04-24 20:00:27.627"));

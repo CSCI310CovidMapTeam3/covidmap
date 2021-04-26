@@ -337,11 +337,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US);
         // String simpleDate = "24-04-2021 08:00:00";
         try {
-            Timestamp ts = Timestamp.valueOf("2021-04-24 09:00:27.627");
+            Timestamp ts = Timestamp.valueOf("2021-04-24 13:00:27.627");
             Date date =new Date(ts.getTime());
             Log.d(TAG, date.toString());
-            // ArrayList<HistoryItem> historyItems = inst.retrieveByDate(date);
-            ArrayList<HistoryItem> historyItems = inst.getAllListHistory();
+            ArrayList<HistoryItem> historyItems = inst.retrieveByDate(date);
+            //ArrayList<HistoryItem> historyItems = inst.getAllListHistory();
             int count = 0;
             Timestamp lastTimeStamp = new Timestamp(0);
             for (HistoryItem historyItem : historyItems){
