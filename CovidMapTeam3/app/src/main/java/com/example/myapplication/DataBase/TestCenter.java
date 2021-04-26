@@ -29,12 +29,4 @@ public class TestCenter{
         return this.lon;
     }
 
-    @Override
-    public String toString() {
-        return "TestCenter{" +
-                "name='" + name + '\'' +
-                ", lon=" + lon +
-                ", lat=" + lat +
-                '}';
-    }
 }

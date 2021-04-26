@@ -34,6 +34,12 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
     public TestCenterDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         context.deleteDatabase(DATABASE_NAME);
+
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db){
+        db.execSQL("PRAGMA key = 'secretkey'");
     }
 
     @Override
@@ -44,7 +50,7 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
                 "long DOUBLE,"+
                 "address TEXT"+
                 ")");
-        ts.initTestCenter();
+
     }
 
     @Override
@@ -85,8 +91,8 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
 
     public void clear(){
         SQLiteDatabase db = ts.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS '" + DATABASE_NAME + "'");
-        //db.execSQL("DELETE FROM " + DATABASE_NAME);
+        //db.execSQL("DROP TABLE IF EXISTS '" + DATABASE_NAME + "'");
+        db.execSQL("DELETE FROM " + DATABASE_NAME);
         //db.execSQL("DROP " + DATABASE_NAME);
     }
 
@@ -106,6 +112,10 @@ public class TestCenterDBHelper extends SQLiteOpenHelper {
                 "Pasadena\n");
         this.addTestCenter("DPH – Monrovia Health Center\n",34.1412157 ,-118.0082174, "330 W Maple Avenue\n" +
                 "Monrovia\n");
+        this.addTestCenter("Santa Monica College\n", 34.0128839,-118.4345706, "2800 Airport Avenue\n" +
+                "Santa Monica");
+        this.addTestCenter("Plummer Park",34.0914681 ,-118.3530227, "7377 Santa Monica Boulevard\n" +
+                "West Hollywood");
         //this.addTestCenter("", ,-, "");
     }
 

@@ -2,13 +2,22 @@ package com.example.myapplication.ui.home;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +27,21 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.example.myapplication.BuildConfig;
+import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.HistoryItem;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
+import com.example.myapplication.DataBase.WebSpider;
+import com.example.myapplication.activity.AboutActivity;
 import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.activity.Recorder;
 import com.example.myapplication.ui.setting.SettingViewModel;
+import com.example.myapplication.ui.tracking.TrackingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,18 +53,30 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private HomeViewModel homeViewModel;
 
-    private static final String TAG = MapsActivity.class.getSimpleName();
+    private static final String TAG = "HomeFragment";
 
     private GoogleMap map;
     private CameraPosition cameraPosition;
@@ -58,7 +88,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     // A default location (Sydney, Australia) and default zoom to use when location permission is
-    // not granted.
+    // not granted. (We changed the logic so it should now be centered at LA)
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 10; // City Level
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -69,6 +99,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private static String defaultCity = "";
 
     private SharedViewModel sharedViewModel;
+
+    private TrackingViewModel trackingViewModel;
+    ArrayList<City> cities;
+    private boolean lastKnownLocationInLA = true;
+
+    private Button backLA;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +127,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         // Reference: https://nabeelj.medium.com/android-how-to-share-data-between-fragments-using-viewmodel-and-livedata-android-mvvm-9fc463af5152
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+        trackingViewModel = ViewModelProviders.of(requireActivity()).get(TrackingViewModel.class);
 
         Observer<String> nameObserver = new Observer<String>() {
             @Override
@@ -100,9 +137,65 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         };
 
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
+
+        root.findViewById(R.id.share_screenshot).setOnClickListener(v -> {
+            captureScreen();
+        });
+
+        root.findViewById(R.id.my_location).setOnClickListener(v -> {
+            if (lastKnownLocation != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(34.0522, -118.2437), DEFAULT_ZOOM));
+//                        new LatLng(lastKnownLocation.getLatitude(),
+//                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+            }
+        });
+
+        loadNewestList();
+
+        backLA = root.findViewById(R.id.my_location);
         return root;
     }
 
+    public void captureScreen()
+    {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback()
+        {
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot)
+            {
+                Bitmap bitmap = snapshot;
+
+                Date now = new Date();
+                android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+                String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+                try {
+                    File imageFile = new File(mPath);
+
+                    String path = MediaStore.Images.Media.insertImage(
+                            getContext().getContentResolver(), bitmap, "CaseData" + Calendar.getInstance().getTime()
+                                    + ".png", null);
+
+                    Uri screenshotUri = Uri.parse(path);
+
+                    final Intent emailIntent = new Intent(
+                            android.content.Intent.ACTION_SEND);
+                    emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+                    emailIntent.setType("image/png");
+                    getContext().startActivity(Intent.createChooser(emailIntent,
+                            "Share Case Data"));
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        map.snapshot(callback);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -112,14 +205,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
         Log.i(TAG, defaultCity);
 
-        // Add a marker in USC and move the camera
-//        LatLng usc = new LatLng(34.0224, -118.2852);
-//        googleMap.addMarker(new MarkerOptions()
-//                .position(usc)
-//                .title("USC")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
+
 
         // Prompt the user for permission.
         getLocationPermission();
@@ -136,42 +223,63 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 new MarkerOptions()
                     .position(santaMonicaLatLng)
                     .title("Santa Monica")
-                    .snippet("Total cases: 4515\nCase Rate: 4884\nDeath: 156\n14-Day Case: 57\n14-Day Case Rate: 62")
-                    .icon(BitmapDescriptorFactory.defaultMarker(10)));
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Santa Monica")))
+                    .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Santa Monica"))));
 
         LatLng culverCityLatLng = new LatLng(34.0211, -118.3965);
         Marker culverCity = googleMap.addMarker(
                 new MarkerOptions()
                     .position(culverCityLatLng)
                     .title("Culver City")
-                    .snippet("Total cases: 2131\nCase Rate: 5346\nDeath: 96\n14-Day Case: 26\n14-Day Case Rate: 65")
-                    .icon(BitmapDescriptorFactory.defaultMarker(40)));
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Culver City")))
+                    .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Culver City"))));
 
         LatLng beverlyHillsLatLng = new LatLng(34.0736, -118.4004);
         Marker beverlyHills = googleMap.addMarker(
                 new MarkerOptions()
                     .position(beverlyHillsLatLng)
                     .title("Beverly Hills")
-                    .snippet("Total cases: 2566\nCase Rate: 7433\nDeath: 34\n14-Day Case: 35\n14-Day Case Rate: 101")
-                    .icon(BitmapDescriptorFactory.defaultMarker(20)));
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Beverly Hills")))
+                    .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Beverly Hills"))));
 
         LatLng westHollywoodLatLng = new LatLng(34.0900, -118.3617);
         Marker westHollywood = googleMap.addMarker(
                 new MarkerOptions()
                     .position(westHollywoodLatLng)
                     .title("West Hollywood")
-                    .snippet("Total cases: 2194\nCase Rate: 5938\nDeath: 35\n14-Day Case: 29\n14-Day Case Rate: 78")
-                    .icon(BitmapDescriptorFactory.defaultMarker(30)));
+                    .snippet(getSnippetByCityName(getSnippetByCityName("West Hollywood")))
+                    .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("West Hollywood"))));
 
         LatLng losAngelesLatLng = new LatLng(34.0522, -118.2437);
         Marker losAngeles = googleMap.addMarker(
                 new MarkerOptions()
                     .position(losAngelesLatLng)
-                    .title("Los Angeles")
-                    .snippet("Total cases: 492519\nCase Rate: 12177\nDeath: 9154\n14-Day Case: 10017\n14-Day Case Rate: 101.47")
-                    .icon(BitmapDescriptorFactory.defaultMarker(0)));
+                    .title("Los Angeles City")
+                    .snippet(getSnippetByCityName(getSnippetByCityName("Los Angeles City")))
+                    .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColorFromCityName("Los Angeles City"))));
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(34.0224, -118.2852))); // Position on USC
 
         TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
+
+        /* HistoryDBHelper test field
+        HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
+        inst1.initTestCenter();
+
+        Log.v(TAG, "try to get all");
+        ArrayList<HistoryItem> testList = inst1.getAllListHistory();
+        for(HistoryItem temp1 : testList){
+            Log.v(TAG, temp1.getCityName());
+        }
+
+        Log.v(TAG, "try to get today");
+        ArrayList<HistoryItem> testList2 = inst1.retrieveByDate(new Date());
+        for(HistoryItem temp1 : testList2){
+            Log.v(TAG, temp1.getCityName());
+        }
+        * end of test field
+        */
+
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -185,21 +293,247 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        if (defaultCity.compareTo("Los Angeles City") == 0){
-            losAngeles.showInfoWindow();
+        if (defaultCity.compareTo("Santa Monica") == 0){
+            santaMonica.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(santaMonicaLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("Culver City") == 0){
             culverCity.showInfoWindow();
-        }
-        else if (defaultCity.compareTo("Santa Monica") == 0){
-            santaMonica.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(culverCityLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("Beverly Hills") == 0){
             beverlyHills.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(beverlyHillsLatLng)); // Position on Santa Monica
         }
         else if (defaultCity.compareTo("West Hollywood") == 0){
             westHollywood.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(westHollywoodLatLng)); // Position on Santa Monica
         }
+        else if (defaultCity.compareTo("Los Angeles City") == 0){
+            losAngeles.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(losAngelesLatLng)); // Position on Santa Monica
+        }
+
+        loadTravelTracking();
+
+        /*
+        WorkRequest uploadWorkRequest =
+                new OneTimeWorkRequest.Builder(Recorder.class)
+                        .build();
+        WorkManager
+                .getInstance(getContext())
+                .enqueue(uploadWorkRequest);
+         */
+    }
+
+    private void loadTravelTracking(){
+        //LatLng USCLatlng = new LatLng(34.0224, -118.2851);
+        //LatLng SMCLatlng = new LatLng(34.0166,  -118.4704);
+        // LatLng UCLALatlng = new LatLng(34.0689, -118.4452); // sucks
+
+        ArrayList<LatLng> LatLngs = new ArrayList<LatLng>();
+
+        HistoryDBHelper inst = HistoryDBHelper.getInstance(getContext());
+        // SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US);
+        // String simpleDate = "24-04-2021 08:00:00";
+        try {
+            Timestamp ts = Timestamp.valueOf("2021-04-24 09:00:27.627");
+            Date date =new Date(ts.getTime());
+            Log.d(TAG, date.toString());
+            // ArrayList<HistoryItem> historyItems = inst.retrieveByDate(date);
+            ArrayList<HistoryItem> historyItems = inst.getAllListHistory();
+            int count = 0;
+            Timestamp lastTimeStamp = new Timestamp(0);
+            for (HistoryItem historyItem : historyItems){
+                Log.d(TAG, historyItem.toString() + count);
+                Timestamp currentTimeStamp = historyItem.getTimestamp();
+                // Ensure that two time stamps are 10 minutes away from each other.
+                if (currentTimeStamp.getTime() - lastTimeStamp.getTime() > 1000 * 60 * 10){
+                    LatLngs.add(new LatLng(historyItem.getLat(), historyItem.getLon()));
+                    lastTimeStamp = currentTimeStamp;
+                }
+                count++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "Load Travel Tracking Date Error");
+        }
+
+        Polyline line = map.addPolyline(new PolylineOptions()
+                .addAll(LatLngs)
+                .width(10)
+                .color(Color.RED));
+    }
+
+
+
+    // load default List
+    public void loadCityList(){
+        cities = new ArrayList<City>();
+
+        Location santaMonicaCityCenter = new Location("");
+        Location culverCityCityCenter = new Location("");
+        Location beverlyHillsCityCenter = new Location("");
+        Location westHollywoodCityCenter = new Location("");
+        Location losAngelesCityCityCenter = new Location("");
+
+        santaMonicaCityCenter.setLatitude(34.0195);
+        santaMonicaCityCenter.setLongitude(-118.4912);
+
+        culverCityCityCenter.setLatitude(34.0211);
+        culverCityCityCenter.setLongitude(-118.3965);
+
+        beverlyHillsCityCenter.setLatitude(34.0736);
+        beverlyHillsCityCenter.setLongitude(-118.4004);
+
+        westHollywoodCityCenter.setLatitude(34.0900);
+        westHollywoodCityCenter.setLongitude(-118.3617);
+
+        losAngelesCityCityCenter.setLatitude(34.0522);
+        losAngelesCityCityCenter.setLongitude(-118.2437);
+
+        City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, 4515, 156, 0, 62);
+        cities.add(santaMonica);
+        City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, 2131, 96, 0, 26);
+        cities.add(culverCity);
+        City beverlyHills = new City("Beverly Hills", 3, beverlyHillsCityCenter, 34186, 2566, 34, 0, 35);
+        cities.add(beverlyHills);
+        City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, 2194, 35, 0, 78);
+        cities.add(westHollywood);
+        City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 3935, 51, 0, 10017);
+        cities.add(losAngelesCity);
+
+        City chernobyl = new City("Chernobyl");
+        cities.add(chernobyl);
+
+    }
+
+    public void loadNewestList(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        int [] DEFAULT = {0, 0, 0, 0, 0};
+        if(WebSpider.getResults() == null || WebSpider.getTotalResults() == null){
+            loadCityList();
+            return;
+        }
+        int[] newFourteenCases = WebSpider.getVaccinated();
+        int[] newTotalCases = WebSpider.getTotalCases();
+        if(newFourteenCases == null || newTotalCases == null){
+            loadCityList();
+        } else{
+            cities = new ArrayList<City>();
+
+            Location santaMonicaCityCenter = new Location("");
+            Location culverCityCityCenter = new Location("");
+            Location beverlyHillsCityCenter = new Location("");
+            Location westHollywoodCityCenter = new Location("");
+            Location losAngelesCityCityCenter = new Location("");
+
+            santaMonicaCityCenter.setLatitude(34.0195);
+            santaMonicaCityCenter.setLongitude(-118.4912);
+
+            culverCityCityCenter.setLatitude(34.0211);
+            culverCityCityCenter.setLongitude(-118.3965);
+
+            beverlyHillsCityCenter.setLatitude(34.0736);
+            beverlyHillsCityCenter.setLongitude(-118.4004);
+
+            westHollywoodCityCenter.setLatitude(34.0900);
+            westHollywoodCityCenter.setLongitude(-118.3617);
+
+            losAngelesCityCityCenter.setLatitude(34.0522);
+            losAngelesCityCityCenter.setLongitude(-118.2437);
+
+            City santaMonica = new City("Santa Monica", 1, santaMonicaCityCenter, 91577, newTotalCases[0], 156, 0, newFourteenCases[0]);
+            cities.add(santaMonica);
+            City culverCity = new City("Culver City", 2, culverCityCityCenter, 39169, newTotalCases[1], 96, 0, newFourteenCases[1]);
+            cities.add(culverCity);
+            City beverlyHills = new City("Beverly Hills", 3, beverlyHillsCityCenter, 34186, newTotalCases[2], 34, 0, newFourteenCases[2]);
+            cities.add(beverlyHills);
+            City westHollywood = new City("West Hollywood", 4, westHollywoodCityCenter, 36450, newTotalCases[3], 35, 0, newFourteenCases[3]);
+            cities.add(westHollywood);
+            City losAngelesCity = new City("Los Angeles City", 5, losAngelesCityCityCenter, 27507, 	newTotalCases[4], 9154, 0, newFourteenCases[4]);
+            cities.add(losAngelesCity);
+
+            City chernobyl = new City("Chernobyl");
+            cities.add(chernobyl);
+        }
+
+    }
+
+
+    private float getMarkerColorFromCityName(String name){
+        for (City city : cities){
+            if (city.getCityName().equals(name)){
+                return city.getMarkerColor();
+            }
+        }
+        return BitmapDescriptorFactory.HUE_BLUE;
+    }
+
+    public String getSnippetByCityName(String name){
+        StringBuilder sb = new StringBuilder();
+        for (City city : cities){
+            if (city.getCityName().equals(name)){
+
+                sb.append("Total cases: ");
+                sb.append(city.getCaseNumber());
+                sb.append("\n");
+                sb.append("Case Rate: ");
+                try {
+                    sb.append((int)city.getCaseRate());
+                } catch (IllegalStateException ise){
+                    sb.append("--- No Population Data ---");
+                } catch (Exception e){
+                    sb.append("--- Internal Error ---");
+                }
+                sb.append("\n");
+                sb.append("Death: ");
+                sb.append(city.getDeathNumber());
+                sb.append("\n");
+                sb.append("Vaccinated Number: ");
+                sb.append(city.getFourteenDayCaseNumber());
+                sb.append("\n");
+                sb.append("Vaccinated Rate: ");
+                try {
+                    sb.append((int) (city.getNewCaseRate()/1000));
+                    sb.append('%');
+                } catch (IllegalStateException ise){
+                    sb.append("--- No Population Data ---");
+                } catch (Exception e){
+                    sb.append("--- Internal Error ---");
+                }
+                return sb.toString();
+            }
+        }
+        return name;
+        //return name+" do not have informations in our system!";
+    }
+
+    public String getDefaultCity() {
+        return defaultCity;
+    }
+
+    public void setDefaultCity(String defaultCity) {
+        HomeFragment.defaultCity = defaultCity;
+    }
+
+    public Location getLastKnownLocation() {
+        return lastKnownLocation;
+    }
+
+    public void setLastKnownLocation(Location lastKnownLocation) {
+        this.lastKnownLocation = lastKnownLocation;
+    }
+
+    public boolean testDummyFunction(){
+        return true;
+    }
+
+    public boolean testGetLocationPermission(){
+        getLocationPermission();
+        return true;
     }
 
     private void getLocationPermission() {
@@ -270,11 +604,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             lastKnownLocation = task.getResult();
+
                             if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                if (checkInLACounty() != -1){
+                                    lastKnownLocationInLA = true;
+                                    sharedViewModel.setCountyData("Los Angeles County");
+
+                                    backLA.setVisibility(View.INVISIBLE);
+                                }
+                                else if (lastKnownLocationInLA){
+                                    lastKnownLocationInLA = false;
+                                    sharedViewModel.setCountyData("Not in Los Angeles County");
+
+                                    backLA.setVisibility(View.VISIBLE);
+
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                    alertDialogBuilder.setTitle("Friendly Warning");
+                                    alertDialogBuilder.setMessage("Out of Los Angeles County \n(Current Service Area)");
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show(); // Show Dialog
+                                }
                             }
+                            else{
+                                sharedViewModel.setCountyData("Los Angeles County");
+                            }
+
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
@@ -289,4 +643,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
+
+    private int checkInLACounty(){ // 1 means in LA, 0 means location unknown, -1 means not in LA
+        if (lastKnownLocation != null) {
+            if (lastKnownLocation.getLatitude() > 33.5 &&  lastKnownLocation.getLatitude() < 34.8){
+                if (lastKnownLocation.getLongitude() > -118.9 && lastKnownLocation.getLongitude() < -117.6){
+                    Log.d(TAG, "checkInLACounty: In LA");
+                    return 1;
+                }
+            }
+            Log.d(TAG, "checkInLACounty: Not In LA");
+            return -1;
+        }
+        Log.d(TAG, "checkInLACounty: Null Location");
+        return 0; // Location is Null Default to True
+    }
+
+
 }

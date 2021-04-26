@@ -2,13 +2,19 @@ package com.example.myapplication.ui.test;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -38,7 +44,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class TestFragment extends Fragment implements OnMapReadyCallback {
 
@@ -82,6 +91,12 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         myMAPF.getMapAsync(this);
 
+        root.findViewById(R.id.share_screenshot).setOnClickListener(v -> {
+            captureScreen();
+        });
+
+        ImageView severityScale = root.findViewById(R.id.imageView2);
+        severityScale.setVisibility(View.INVISIBLE);
         return root;
     }
 
@@ -143,6 +158,46 @@ public class TestFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+    }
+
+    public void captureScreen()
+    {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback()
+        {
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot)
+            {
+                Bitmap bitmap = snapshot;
+
+                Date now = new Date();
+                android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+                String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+                try {
+                    File imageFile = new File(mPath);
+
+                    String path = MediaStore.Images.Media.insertImage(
+                            getContext().getContentResolver(), bitmap, "CaseData" + Calendar.getInstance().getTime()
+                                    + ".png", null);
+
+                    Uri screenshotUri = Uri.parse(path);
+
+                    final Intent emailIntent = new Intent(
+                            android.content.Intent.ACTION_SEND);
+                    emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+                    emailIntent.setType("image/png");
+                    getContext().startActivity(Intent.createChooser(emailIntent,
+                            "Share Case Data"));
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        map.snapshot(callback);
     }
 
     private void getLocationPermission() {

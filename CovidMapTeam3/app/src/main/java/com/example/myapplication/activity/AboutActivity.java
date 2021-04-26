@@ -19,7 +19,8 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView versionText = findViewById(R.id.version);
-        versionText.setText("version : " + getPackageName(this));
+        String author = "\nAuthor: CSCI 310 Spring 2021 Team 3\nTeam Captain: Amity Tang\nTeam Member: Joyce Chen, Frank Chen, Martin Wang, Zane Li, Lucas Dai";
+        versionText.setText("version : " + getPackageName(this) + author);
     }
 
     public static String getPackageName(Context context) {
