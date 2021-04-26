@@ -36,7 +36,7 @@ Markers represent locations of test stations.
 
 Click on each marker to show the name and precise address of that test center.
 ## Tracking
-Under development
+Click on any date on the calendar to show entire tracking history on that date.
 ## Setting
 About: Shows the basic information of our app and functions of each tab.
 
