@@ -118,11 +118,7 @@ public class NewsFragment extends Fragment {
         return root;
     }
 
-<<<<<<< HEAD
     public String getUrl() {
-=======
-    public String getUrl(){
->>>>>>> bdfdbfdfd7cd6ee7022957793162c5dd0298dd24
         return url;
     }
 
