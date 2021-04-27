@@ -106,6 +106,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private Button backLA;
 
+    private Date selectedDate = new Date(Timestamp.valueOf("2021-04-24 13:00:27.627").getTime());
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -137,6 +139,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         };
 
         sharedViewModel.getNameData().observe(getViewLifecycleOwner(), nameObserver);
+
+        Observer<Date> dateObserver = new Observer<Date>() {
+            @Override
+            public void onChanged(Date date) {
+                selectedDate = date;
+            }
+        };
+
+        sharedViewModel.getSelectedDate().observe(getViewLifecycleOwner(), dateObserver);
 
         root.findViewById(R.id.share_screenshot).setOnClickListener(v -> {
             captureScreen();
@@ -337,8 +348,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US);
         // String simpleDate = "24-04-2021 08:00:00";
         try {
-            Timestamp ts = Timestamp.valueOf("2021-04-24 13:00:27.627");
-            Date date =new Date(ts.getTime());
+            // Timestamp ts = Timestamp.valueOf("2021-04-24 13:00:27.627");
+            // Date date = new Date(ts.getTime());
+            Date date = selectedDate;
             Log.d(TAG, date.toString());
             ArrayList<HistoryItem> historyItems = inst.retrieveByDate(date);
             //ArrayList<HistoryItem> historyItems = inst.getAllListHistory();

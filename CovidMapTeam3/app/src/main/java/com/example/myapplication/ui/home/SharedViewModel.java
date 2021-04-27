@@ -3,10 +3,13 @@ package com.example.myapplication.ui.home;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.Date;
+
 public class SharedViewModel extends ViewModel {
 
     private MutableLiveData<String> name;
     private MutableLiveData<String> county;
+    private MutableLiveData<Date> selectedDate;
 
     public void setNameData(String nameData) {
         if (name == null) {
@@ -23,6 +26,15 @@ public class SharedViewModel extends ViewModel {
         }
 
         county.setValue(countyData);
+
+    }
+
+    public void setSelectedDate(Date date) {
+        if (selectedDate == null) {
+            selectedDate = new MutableLiveData<>();
+        }
+
+        selectedDate.setValue(date);
 
     }
 
@@ -57,6 +69,14 @@ public class SharedViewModel extends ViewModel {
         }
 
         return county;
+    }
+
+    public MutableLiveData<Date> getSelectedDate() {
+        if (selectedDate == null) {
+            selectedDate = new MutableLiveData<>();
+        }
+
+        return selectedDate;
     }
 
     public String getNameDataBackground() {

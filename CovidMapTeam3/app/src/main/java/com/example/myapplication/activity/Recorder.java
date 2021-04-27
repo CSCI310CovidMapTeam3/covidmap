@@ -118,7 +118,12 @@ public class Recorder extends Worker {
                                 HistoryDBHelper inst = HistoryDBHelper.getInstance(mContext);
                                 Date date = new Date();
                                 System.out.println(new Timestamp(date.getTime()));
-                                inst.addHistoryItem(mCity, mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                if (checkInLACounty(mLocation) == 1){
+                                    inst.addHistoryItem(mCity, mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                } else{
+                                    Log.d(TAG, "Geocoder: Not in LA, not Recorded " + mCity);
+                                }
+
                                 // new Timestamp(today.getTime());
                                 mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                             } else {
@@ -146,5 +151,18 @@ public class Recorder extends Worker {
         return Result.success();
     }
 
-
+    private int checkInLACounty(Location location){
+        if (location != null) {
+            if (location.getLatitude() > 33.5 &&  location.getLatitude() < 34.8){
+                if (location.getLongitude() > -118.9 && location.getLongitude() < -117.6){
+                    Log.d(TAG, "checkInLACounty: In LA");
+                    return 1;
+                }
+            }
+            Log.d(TAG, "checkInLACounty: Not In LA");
+            return -1;
+        }
+        Log.d(TAG, "checkInLACounty: Null Location");
+        return 0; // Location is Null Default to True
+    }
 }

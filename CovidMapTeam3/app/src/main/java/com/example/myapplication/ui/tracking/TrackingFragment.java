@@ -32,6 +32,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import sun.bob.mcalendarview.MCalendarView;
 import sun.bob.mcalendarview.vo.DateData;
@@ -66,13 +67,6 @@ public class TrackingFragment extends Fragment {
         });
 
 
-        CompactCalendarView compactCalendarView = (CompactCalendarView) root.findViewById(R.id.calender);
-        compactCalendarView.setUseThreeLetterAbbreviation(true);
-
-        Event ev2 = new Event(Color.RED, 1618853944000L);
-        compactCalendarView.addEvent(ev2);
-
-
         // Shared View Model
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 
@@ -91,11 +85,94 @@ public class TrackingFragment extends Fragment {
         });
 
 
+
+        compactCalendar = (CompactCalendarView) root.findViewById(R.id.calender);
+        compactCalendar.setUseThreeLetterAbbreviation(true);
+
+        date_view = (TextView)
+                root.findViewById(R.id.date_view);
+
+
+
+
+        // Highlight Days with history
+        HistoryDBHelper history = HistoryDBHelper.getInstance(getContext()); // get history class
+        ArrayList<HistoryItem> historyFromAllDates = history.getAllListHistory(); // all history
+        for (HistoryItem hi : historyFromAllDates){
+            Date tempDate = hi.getTimestamp();
+            Event record = new Event(Color.RED, tempDate.getTime());
+            compactCalendar.addEvent(record);
+        }
+        // End Highlight
+
+        compactCalendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                // sharedViewModel which provide the date to the map
+                sharedViewModel.setSelectedDate(dateClicked);
+                // set this date in TextView for Display
+                date_view.setText(dateClicked.toString());
+
+                // change the prompt
+                TextView prompt = (TextView) root.findViewById(R.id.prompt);
+                prompt.setText("Scroll down to view all history.");
+
+                // fill the tracking table
+                TableLayout tl = (TableLayout) root.findViewById(R.id.tracking_table); // tracking history table
+                tl.removeAllViews();
+
+                String title = "name, latitude, longitude, time";
+                TableRow titleRow = new TableRow(getContext());
+                TextView titleText = new TextView(getContext());
+                titleText.setText(title);
+                titleRow.addView(titleText);
+                tl.addView(titleRow,0);
+
+                ArrayList<String> historyStringList = new ArrayList<>(); // history on that date in string
+                HistoryDBHelper history = HistoryDBHelper.getInstance(getContext()); // get history class
+                ArrayList<HistoryItem> historyFromDate = history.retrieveByDate(dateClicked); // all history
+
+                for (HistoryItem hi : historyFromDate){
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(hi.getCityName());
+                    sb.append(", ");
+                    sb.append(hi.getLat());
+                    sb.append(", ");
+                    sb.append(hi.getLon());
+                    sb.append(", ");
+                    sb.append(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).format(hi.getTimestamp()));
+                    //sb.append(hi.getTimestamp().toString());
+                    historyStringList.add(sb.toString());
+                }
+
+                int i = 0;
+                for (String s : historyStringList){
+                    TableRow tr = new TableRow(getContext());
+                    TextView tv = new TextView(getContext());
+                    tv.setText(s);
+                    tr.addView(tv);
+                    tl.addView(tr,++i);
+                }
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                date_view.setText(firstDayOfNewMonth.toString());
+
+                compactCalendar.removeAllEvents();
+                HistoryDBHelper history = HistoryDBHelper.getInstance(getContext()); // get history class
+                ArrayList<HistoryItem> historyFromAllDates = history.getAllListHistory(); // all history
+                for (HistoryItem hi : historyFromAllDates){
+                    Date tempDate = hi.getTimestamp();
+                    Event record = new Event(Color.RED, tempDate.getTime());
+                    compactCalendar.addEvent(record);
+                }
+            }
+        });
 /*
         calendar = (CalendarView)
                 root.findViewById(R.id.calender);
-        date_view = (TextView)
-                root.findViewById(R.id.date_view);
+
 
  
 
@@ -186,5 +263,10 @@ public class TrackingFragment extends Fragment {
                         }); */
 
         return root;
+    }
+
+    public void onDestroyView() {
+        compactCalendar.removeAllEvents();
+        super.onDestroyView();
     }
 }
