@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.tracking;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import com.example.myapplication.DataBase.HistoryDBHelper;
 import com.example.myapplication.DataBase.HistoryItem;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.home.SharedViewModel;
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import org.w3c.dom.Text;
 
@@ -29,6 +32,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import sun.bob.mcalendarview.MCalendarView;
+import sun.bob.mcalendarview.vo.DateData;
 
 public class TrackingFragment extends Fragment {
 
@@ -38,11 +44,15 @@ public class TrackingFragment extends Fragment {
     CalendarView calendar;
     TextView date_view;
     String dateSelected;
+    CompactCalendarView compactCalendar;
 
     private String currentCounty = "Los Angeles County";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+
+
 
         trackingViewModel =
                 new ViewModelProvider(this).get(TrackingViewModel.class);
@@ -54,6 +64,13 @@ public class TrackingFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+
+        CompactCalendarView compactCalendarView = (CompactCalendarView) root.findViewById(R.id.calender);
+        compactCalendarView.setUseThreeLetterAbbreviation(true);
+
+        Event ev2 = new Event(Color.RED, 1618853944000L);
+        compactCalendarView.addEvent(ev2);
 
 
         // Shared View Model
@@ -73,10 +90,14 @@ public class TrackingFragment extends Fragment {
             }
         });
 
+
+/*
         calendar = (CalendarView)
                 root.findViewById(R.id.calender);
         date_view = (TextView)
                 root.findViewById(R.id.date_view);
+
+ 
 
         // Add Listener in calendar
         calendar
@@ -162,7 +183,7 @@ public class TrackingFragment extends Fragment {
                                     tl.addView(tr,++i);
                                 }
                             }
-                        });
+                        }); */
 
         return root;
     }

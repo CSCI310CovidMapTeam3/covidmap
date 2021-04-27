@@ -26,13 +26,22 @@
             android:textStyle="bold" />
 
         <!-- Add CalenderView to display the Calender -->
-        <CalendarView
+
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
             android:id="@+id/calender"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="19dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </CalendarView>
+            android:layout_width="fill_parent"
+            android:layout_height="250dp"
+            android:layout_below="@+id/date_view"
+            android:layout_marginTop="27dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:compactCalendarBackgroundColor="#FFFFFFFF"
+            app:compactCalendarCurrentDayBackgroundColor="#FF03DAC5"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="#AED6D4"
+            app:compactCalendarMultiEventIndicatorColor="#fff"
+            app:compactCalendarTargetHeight="250dp"
+            app:compactCalendarTextColor="#FF000000"
+            app:compactCalendarTextSize="12sp" />
 
         <TextView
             android:id="@+id/text_tracking"
