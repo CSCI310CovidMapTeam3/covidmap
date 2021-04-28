@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,12 +50,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.ButtCap;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -374,8 +378,29 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         Polyline line = map.addPolyline(new PolylineOptions()
                 .addAll(LatLngs)
-                .width(10)
-                .color(Color.RED));
+                .startCap(new RoundCap())
+                .endCap(new ButtCap())
+                .width(15)
+                .color(Color.argb(255, 153, 27, 30)));
+
+        line.setTag(new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(selectedDate));
+        line.setJointType(JointType.ROUND);
+        line.setClickable(true);
+
+        map.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+                if ((polyline.getColor() == Color.argb(255, 153, 27, 30))) {
+                    polyline.setColor(Color.argb(255, 255, 204, 0));
+                } else {
+                    // The default pattern is a solid stroke.
+                    polyline.setColor(Color.argb(255, 153, 27, 30));
+                }
+
+                Toast.makeText(getActivity(), "Date " + polyline.getTag().toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
