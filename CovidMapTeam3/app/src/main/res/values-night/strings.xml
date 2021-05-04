@@ -16,6 +16,11 @@
         <item>Beverly Hills</item>
         <item>West Hollywood</item>
     </string-array>
+    
+    <string-array name="ringtoneChoices">
+        <item>Default Ringtone</item>
+        <item>App\'s Notification Sound</item>
+    </string-array>
 
     <string name="start">start</string>
     <string name="about">About</string>
