@@ -117,6 +117,8 @@ public class TrackingFragment extends Fragment {
                 TextView prompt = (TextView) root.findViewById(R.id.prompt);
                 prompt.setText("Scroll down to view all history.");
 
+                root.findViewById(R.id.deleteTracking).setVisibility(View.VISIBLE);
+
                 // fill the tracking table
                 TableLayout tl = (TableLayout) root.findViewById(R.id.tracking_table); // tracking history table
                 tl.removeAllViews();

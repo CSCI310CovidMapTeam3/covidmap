@@ -55,6 +55,19 @@
             android:layout_marginBottom="4dp"
             android:textSize="20sp" />
 
+        <Button
+            android:id="@+id/deleteTracking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="310dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone"
+            android:text="Delete" />
+
         <ScrollView
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
