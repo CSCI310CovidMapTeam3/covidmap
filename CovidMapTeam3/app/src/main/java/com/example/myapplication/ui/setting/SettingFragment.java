@@ -72,6 +72,12 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        Spinner ringtone = root.findViewById(R.id.spinner2);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.ringtoneChoices, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ringtone.setAdapter(adapter2);
+        ringtone.setOnItemSelectedListener(this);
+        
         // Shared View Model
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
 
