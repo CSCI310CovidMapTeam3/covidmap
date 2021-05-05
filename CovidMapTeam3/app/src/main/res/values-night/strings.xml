@@ -22,6 +22,12 @@
         <item>App\'s Notification Sound</item>
     </string-array>
 
+    <string-array name="dataRetentionChoices">
+        <item>21</item>
+        <item>15</item>
+        <item>7</item>
+    </string-array>
+
     <string name="start">start</string>
     <string name="about">About</string>
 
