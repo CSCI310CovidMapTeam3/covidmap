@@ -153,5 +153,32 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
         return HistoryItems;
     }
 
+    public boolean deleteByDate(Date day){
+        try{
+            SQLiteDatabase db = ts.getWritableDatabase();
+            String dateFormat = new SimpleDateFormat("yyyy-MM-dd").format(day);
+            db.execSQL("DELETE FROM " + DATABASE_NAME +" WHERE DATE(timestamp) ="+ "'" + dateFormat + "'");
+
+            return true;
+        }catch (Exception error)
+        {
+            Log.v(TAG, error.toString());
+            return false;
+        }
+    }
+
+    public boolean deleteBeforeDate(Date day){
+        try{
+            SQLiteDatabase db = ts.getWritableDatabase();
+            String dateFormat = new SimpleDateFormat("yyyy-MM-dd").format(day);
+            db.execSQL("DELETE FROM " + DATABASE_NAME +" WHERE DATE(timestamp) <="+ "'" + dateFormat + "'");
+
+            return true;
+        }catch (Exception error)
+        {
+            Log.v(TAG, error.toString());
+            return false;
+        }
+    }
 
 }

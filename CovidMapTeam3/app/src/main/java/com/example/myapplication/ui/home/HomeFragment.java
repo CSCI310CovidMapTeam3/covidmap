@@ -277,6 +277,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         TestCenterDBHelper inst = TestCenterDBHelper.getInstance(getContext());
 
+
+        HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
+        try {
+            Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse("2021-04-25");
+            inst1.deleteBeforeDate(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
         /* HistoryDBHelper test field
         HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
         inst1.initTestCenter();
