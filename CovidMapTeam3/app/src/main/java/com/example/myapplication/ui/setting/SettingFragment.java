@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.setting;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -7,6 +8,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,6 +55,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
 
     private SettingViewModel settingViewModel;
     private SharedViewModel sharedViewModel;
+    private Uri sound;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,6 +82,11 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ringtone.setAdapter(adapter2);
         ringtone.setOnItemSelectedListener(this);
+
+        // set sound
+        sound = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ring);
+        // RingtoneManager.getRingtone(getContext(), sound).play();
+
 
         Spinner dataRetention = root.findViewById(R.id.spinner3);
         ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(getActivity(), R.array.dataRetentionChoices, android.R.layout.simple_spinner_item);
@@ -157,18 +167,27 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                     NotificationChannel channel = new NotificationChannel("my_channel_1", name, importance);
                     channel.setDescription(description);
 
+//                    // set channel sound
+//                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+//                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+//                            .build();
+//                    channel.setSound(sound, audioAttributes);
+
                     NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
                     notificationManager.createNotificationChannel(channel);
 
                     PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "my_channel_1")
+                            .setSound(sound)
                             .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                             .setContentTitle("COVID-19 NOTIFICATION")
                             .setContentText("This is a test notification!")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setContentIntent(pendingIntent)
                             .setAutoCancel(true);
+
 
                     // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
                     // notificationId is a unique int for each notification that you must define
