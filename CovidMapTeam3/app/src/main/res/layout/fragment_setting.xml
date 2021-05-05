@@ -26,16 +26,12 @@
         android:id="@+id/about_btn"
         android:layout_width="350dp"
         android:layout_height="45dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginLeft="31dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="636dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="12dp"
         android:text="About"
         android:textColor="@color/black"
         app:backgroundTint="@color/palegreen"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/clear_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_storage" />
@@ -44,18 +40,13 @@
         android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="255dp"
-        android:layout_marginRight="255dp"
-        android:layout_marginBottom="352dp"
         android:text="Notification  "
-        app:layout_constraintBottom_toTopOf="@+id/text_setting"
+        app:layout_constraintBottom_toTopOf="@+id/spinner2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.108"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner1" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner1"
+        app:layout_constraintVertical_bias="0.369" />
 
     <Spinner
         android:id="@+id/spinner1"
@@ -67,9 +58,10 @@
         android:layout_marginRight="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.291" />
+        app:layout_constraintVertical_bias="0.276" />
 
     <Spinner
         android:id="@+id/spinner2"
@@ -79,25 +71,19 @@
         android:layout_marginLeft="30dp"
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginBottom="236dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/spinner3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.706" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner1"
+        app:layout_constraintVertical_bias="0.689" />
 
     <Spinner
         android:id="@+id/spinner3"
         android:layout_width="350dp"
         android:layout_height="32dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.575" />
@@ -116,24 +102,21 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.258" />
+        app:layout_constraintVertical_bias="0.244" />
 
     <Button
         android:id="@+id/clear_btn"
         android:layout_width="350dp"
         android:layout_height="45dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="28dp"
         android:text="Clear All Data"
         android:textColor="@color/black"
         app:backgroundTint="@color/palegreen"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.158" />
+        app:layout_constraintTop_toBottomOf="@+id/about_btn" />
 
     <Button
         android:id="@+id/dark_btn"
@@ -188,14 +171,12 @@
         android:layout_height="18dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="298dp"
         android:layout_marginRight="298dp"
-        android:layout_marginBottom="10dp"
         android:text="Storage Size:"
-        app:layout_constraintBottom_toTopOf="@+id/about_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintHorizontal_bias="0.005"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -203,18 +184,17 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="267dp"
-        android:layout_marginRight="267dp"
-        android:layout_marginBottom="404dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginRight="1dp"
         android:text="Notification Sound"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/spinner2"
+        app:layout_constraintEnd_toStartOf="@+id/spinner2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+        app:layout_constraintTop_toBottomOf="@+id/switch1"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Switch
         android:id="@+id/switch3"
@@ -222,31 +202,29 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="122dp"
         android:layout_marginLeft="122dp"
+        android:layout_marginTop="26dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginBottom="39dp"
         android:text="Location"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/spinner2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/switch1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.356" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner1"
+        app:layout_constraintVertical_bias="0.138" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="290dp"
-        android:layout_marginRight="290dp"
+        android:layout_height="19dp"
         android:text="Data Retention"
         app:layout_constraintBottom_toTopOf="@+id/spinner3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner2"
+        app:layout_constraintVertical_bias="1.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
