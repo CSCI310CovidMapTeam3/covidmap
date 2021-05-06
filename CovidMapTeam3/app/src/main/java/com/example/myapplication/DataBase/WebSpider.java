@@ -52,7 +52,7 @@ public class WebSpider {
             Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
-            Elements eleCity = elements.get(0).children().get(0).children().get(0).children().get(1).children().get(1).children();
+            Elements eleCity = elements.get(1).children().get(0).children().get(0).children().get(1).children().get(1).children();
 //            results = new int[]{0, 0, 0, 0, 0};
             for(Element element:eleCity) {
                 Elements tdsElements = element.select("td");

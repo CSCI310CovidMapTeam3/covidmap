@@ -1,47 +1,44 @@
 package com.example.myapplication.ui.home;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
 import com.example.myapplication.BuildConfig;
+import com.example.myapplication.DailyNotification.NotificationReceiver;
 import com.example.myapplication.DataBase.HistoryDBHelper;
 import com.example.myapplication.DataBase.HistoryItem;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
-import com.example.myapplication.activity.AboutActivity;
-import com.example.myapplication.activity.MapsActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.activity.Recorder;
-import com.example.myapplication.ui.setting.SettingViewModel;
 import com.example.myapplication.ui.tracking.TrackingViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -66,9 +63,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -212,6 +207,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         map.snapshot(callback);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
@@ -279,6 +275,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
         HistoryDBHelper inst1 = HistoryDBHelper.getInstance(getContext());
+
+
+        //AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 10);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (calendar.getTime().compareTo(new Date()) < 0)
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        Intent intent = new Intent(getContext(), NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        }
+
 //        try {
 //            Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse("2021-04-25");
 //            inst1.deleteBeforeDate(date1);
@@ -637,7 +654,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void getDeviceLocation() {
+    public void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
