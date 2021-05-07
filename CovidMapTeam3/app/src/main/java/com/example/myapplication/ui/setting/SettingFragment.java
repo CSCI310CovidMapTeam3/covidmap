@@ -49,6 +49,7 @@ import com.example.myapplication.activity.Recorder;
 import com.example.myapplication.ui.home.SharedViewModel;
 
 import java.io.File;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SettingFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -56,7 +57,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
     private SettingViewModel settingViewModel;
     private SharedViewModel sharedViewModel;
     private Uri sound;
-
+    private final long Milliseconds_Per_Day = 1000 * 60 * 60 * 24;
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -81,7 +82,18 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.ringtoneChoices, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ringtone.setAdapter(adapter2);
-        ringtone.setOnItemSelectedListener(this);
+        ringtone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String text = parent.getItemAtPosition(position).toString();
+                Log.d("On Ring Item Selected", text);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("On Ring Item Not Select", "Ring Item Not Select");
+            }
+        });
 
         // set sound
         sound = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ring);
@@ -92,7 +104,41 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(getActivity(), R.array.dataRetentionChoices, android.R.layout.simple_spinner_item);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dataRetention.setAdapter(adapter3);
-        dataRetention.setOnItemSelectedListener(this);
+        dataRetention.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String text = parent.getItemAtPosition(position).toString();
+                Log.d("On Retention Selected", text);
+                HistoryDBHelper inst = HistoryDBHelper.getInstance(getContext());
+                Date currentDate = new Date();
+                Date removeDate = new Date();;
+                switch (text) {
+                    case "21":
+                        Log.d("On Retention Selected", "Text Equals 21");
+                        removeDate = new Date(currentDate.getTime() - Milliseconds_Per_Day * 21);
+                        inst.deleteBeforeDate(removeDate);
+                        break;
+                    case "15":
+                        Log.d("On Retention Selected", "Text Equals 15");
+                        removeDate = new Date(currentDate.getTime() - Milliseconds_Per_Day * 15);
+                        inst.deleteBeforeDate(removeDate);
+                        break;
+                    case "7":
+                        Log.d("On Retention Selected", "Text Equals 7");
+                        removeDate = new Date(currentDate.getTime() - Milliseconds_Per_Day * 7);
+                        inst.deleteBeforeDate(removeDate);
+                        break;
+                    default:
+                        Log.d("On Retention Selected", "Text Equals Default");
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("On Retention Not Select", "Retention Not Selected");
+            }
+        });
         
         // Shared View Model
         sharedViewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
@@ -211,7 +257,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String text = parent.getItemAtPosition(position).toString();
         Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
-        Log.d("On Item Selected", text);
+        Log.d("On City Item Selected", text);
         settingViewModel.setCity(text);
         sharedViewModel.setNameData(text);
     }
