@@ -128,6 +128,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private final long UPDATE_INTERVAL = 60 * 1000;  /* 60 second */
     private final long FASTEST_INTERVAL = 10 * 1000; /* 10 second */
 
+    Geocoder mGeocoder;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -228,7 +230,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
-
+        mGeocoder = new Geocoder(getActivity());
         Log.i(TAG, "On Map Ready");
         // defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
         Log.i(TAG, defaultCity);
@@ -674,7 +676,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void geofenceHelper(Context mContext) {
-        Geocoder mGeocoder = new Geocoder(mContext);
 
         String newGeoFencingCity;
 
@@ -733,7 +734,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
         SettingsClient settingsClient = LocationServices.getSettingsClient(getContext());
         settingsClient.checkLocationSettings(locationSettingsRequest);
-
 
         try {
             if (locationPermissionGranted) {
