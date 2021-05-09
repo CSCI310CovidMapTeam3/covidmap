@@ -825,15 +825,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         NotificationChannel notificationChannel;
 
-        Intent intent = new Intent(getContext(), HomeFragment.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), HomeFragment.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(getContext(),
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity().getApplicationContext(),
                 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity().getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("Geofence NOTIFICATION")
                 .setContentText(message)
@@ -869,7 +869,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             builder.setChannelId(NOTIFICATION_CHANNEL_ID);
         }
-        NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+        NotificationManager notificationManager = getActivity().getApplicationContext().getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(notificationChannel);
 
         // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
@@ -888,5 +888,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if (currentSoundSetting.equals("Fight On")) {
             useCustomizeSound = true;
         }
+
+
     }
 }
