@@ -47,8 +47,6 @@ public class NotificationHelper {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_ID);
         mBuilder.setSmallIcon(R.mipmap.ic_launcher);
 
-
-
         mBuilder.setContentTitle("Your Daily Notification")
                 .setContentText("Content")
                 .setAutoCancel(false)

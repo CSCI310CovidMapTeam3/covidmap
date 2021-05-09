@@ -771,7 +771,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     // Zhian Li: I copyed code from Yijia Chen on notification
     public void sendGeofenceNotification(String message){
-        Uri sound = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ring);
+        Uri sound = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.ring);
 
         CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);
         String description = getString(R.string.common_google_play_services_notification_channel_name);

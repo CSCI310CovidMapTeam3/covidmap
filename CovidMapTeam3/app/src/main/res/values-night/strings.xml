@@ -19,7 +19,7 @@
     
     <string-array name="ringtoneChoices">
         <item>Default Ringtone</item>
-        <item>App\'s Notification Sound</item>
+        <item>Fight On</item>
     </string-array>
 
     <string-array name="dataRetentionChoices">

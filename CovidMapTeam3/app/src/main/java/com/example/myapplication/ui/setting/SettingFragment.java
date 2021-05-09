@@ -6,13 +6,16 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +43,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.HistoryDBHelper;
 import com.example.myapplication.DataBase.TestCenterDBHelper;
 import com.example.myapplication.DataBase.WebSpider;
@@ -87,6 +91,10 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String text = parent.getItemAtPosition(position).toString();
                 Log.d("On Ring Item Selected", text);
+                SharedPreferences saved_values = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = saved_values.edit();
+                editor.putString("count",text);
+                editor.apply();
             }
 
             @Override
@@ -96,7 +104,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         // set sound
-        sound = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ring);
+        sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + BuildConfig.APPLICATION_ID + "/" + R.raw.fighton);
         // RingtoneManager.getRingtone(getContext(), sound).play();
 
 
@@ -203,41 +211,22 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         // send a notification button
+        // Zhian Li: Code from https://stackoverflow.com/questions/48986856/android-notification-setsound-is-not-working
         Button sendNotification;
         sendNotification = root.findViewById(R.id.notification_btn);
         sendNotification.setOnClickListener(
                 view -> {
-                    CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);
-                    String description = getString(R.string.common_google_play_services_notification_channel_name);
-                    int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                    NotificationChannel channel = new NotificationChannel("my_channel_1", name, importance);
-                    channel.setDescription(description);
+                    SharedPreferences saved_values = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-//                    // set channel sound
-//                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
-//                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-//                            .build();
-//                    channel.setSound(sound, audioAttributes);
+                    String currentSoundSetting = saved_values.getString("count", "default");
+                    Log.d("SoundSetting", "onCreateView: "+ currentSoundSetting);
 
-                    NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
-                    notificationManager.createNotificationChannel(channel);
+                    if (!currentSoundSetting.equals("Fight On")) {
+                        sendNotificationDefaultSound();
+                    } else{
+                        sendNotificationCustomizedSound();
+                    }
 
-                    PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
-
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "my_channel_1")
-                            .setSound(sound)
-                            .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                            .setContentTitle("COVID-19 NOTIFICATION")
-                            .setContentText("This is a test notification!")
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setContentIntent(pendingIntent)
-                            .setAutoCancel(true);
-
-
-                    // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-                    // notificationId is a unique int for each notification that you must define
-                    notificationManager.notify(1, builder.build());
                 }
         );
 
@@ -251,6 +240,71 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                 " MB.";
         storageSize.setText(storageInfo);
         return root;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void sendNotificationDefaultSound(){
+        CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);
+        String description = getString(R.string.common_google_play_services_notification_channel_name);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel("my_channel_1", name, importance);
+        channel.setDescription(description);
+
+        NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "my_channel_1")
+                .setSound(sound)
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle("COVID-19 NOTIFICATION")
+                .setContentText("This is a test notification!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+
+        // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(1, builder.build());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void sendNotificationCustomizedSound(){
+        String CHANNEL_ID="69";
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);
+        String description = getString(R.string.common_google_play_services_notification_channel_name);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+        channel.setSound(sound, audioAttributes);
+
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel( channel );
+        }
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle("COVID-19 NOTIFICATION")
+                .setContentText("This is a test notification!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setSound(sound)
+                .setAutoCancel(true);
+
+
+        // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(1, builder.build());
     }
 
     @Override
