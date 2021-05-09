@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,8 +22,16 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
         WorkManager.getInstance(getApplicationContext()).enqueue(saveRequest);
+
+        logToFile();
 
         dailyNotification();
     }
@@ -95,4 +107,107 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void logToFile(){
+        if ( isExternalStorageWritable() ) {
+
+            File appDirectory = new File( Environment.getExternalStorageDirectory() + "/MyPersonalAppFolder" );
+            File logDirectory = new File( appDirectory + "/logs" );
+            File logFile = new File( logDirectory, "logcat_" + System.currentTimeMillis() + ".txt" );
+
+            // create app folder
+            if ( !appDirectory.exists() ) {
+                appDirectory.mkdir();
+            }
+
+            // create log folder
+            if ( !logDirectory.exists() ) {
+                logDirectory.mkdir();
+            }
+
+            // clear the previous logcat and then write the new one to the file
+            try {
+                Process process = Runtime.getRuntime().exec("logcat -c");
+                Runtime.getRuntime().exec("logcat -f" + " /sdcard/Logcat.txt");
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+
+            Log.d("MainActivity", "Readable & Writable");
+
+            appendLog("My Log");
+
+            try {
+                writeToFile("My Log");
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        } else if ( isExternalStorageReadable() ) {
+            // only readable
+            Log.d("MainActivity", "Readable");
+        } else {
+            // not accessible
+            Log.d("MainActivity", "not accessible");
+        }
+
+
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if ( Environment.MEDIA_MOUNTED.equals( state ) ) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if ( Environment.MEDIA_MOUNTED.equals( state ) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals( state ) ) {
+            return true;
+        }
+        return false;
+    }
+
+    public void appendLog(String text)
+    {
+        File path = getApplicationContext().getExternalFilesDir(null);
+        Date date = new Date();
+        String dateString = new SimpleDateFormat("-MM-dd-yyyy", Locale.US).format(date);
+        String filename = "log" + dateString + ".txt";
+
+        File file = new File(path, filename);
+        try
+        {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
+            buf.append("Application Start on ");
+            buf.append(new Date().toString());
+            buf.newLine();
+            buf.close();
+            buf.flush();
+
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void writeToFile(String text) throws IOException {
+        File path = getApplicationContext().getExternalFilesDir(null);
+        File file = new File(path, "my-file-name.txt");
+        FileOutputStream stream = new FileOutputStream(file);
+        try {
+            stream.write("text-to-write".getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            stream.close();
+            Log.d("MainActivity", "finished writing");
+        }
+    }
 }
