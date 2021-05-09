@@ -35,10 +35,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dailyNotification();
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         logToFile();
 
-        dailyNotification();
+
     }
 
     public void dailyNotification(){
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
 
         if (calendar.getTime().compareTo(new Date()) < 0)
+            Log.v(TAG, " time has past");
             calendar.add(Calendar.DAY_OF_MONTH, 1);
 
         Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (alarmManager != null) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-
+            Log.v(TAG, " alarmManager-setRepeating");
         }
     }
 
@@ -186,8 +189,9 @@ public class MainActivity extends AppCompatActivity {
             buf.append("Application Start on ");
             buf.append(new Date().toString());
             buf.newLine();
-            buf.close();
             buf.flush();
+            buf.close();
+
 
         }
         catch (IOException e)

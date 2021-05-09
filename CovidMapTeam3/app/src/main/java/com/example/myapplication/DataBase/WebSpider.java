@@ -73,7 +73,7 @@ public class WebSpider {
                     String forteen = tdsElements.get(1).text();
                     totalResults[3]=Integer.parseInt(forteen);
                 }
-                if(nameString.equals("Los Angeles - Downtown*")) {
+                if(nameString.equals("Los Angeles - Downtown")) {
                     String forteen = tdsElements.get(1).text();
                     totalResults[4]=Integer.parseInt(forteen);
                 }

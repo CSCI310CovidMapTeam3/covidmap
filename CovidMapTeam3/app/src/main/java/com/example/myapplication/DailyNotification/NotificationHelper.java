@@ -29,6 +29,7 @@ import androidx.work.ListenableWorker;
 
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.DataBase.HistoryDBHelper;
+import com.example.myapplication.DataBase.WebSpider;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.home.HomeFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -109,17 +110,21 @@ public class NotificationHelper {
 
                                 int checkInLAResult = checkInLACounty(mLocation);
 
+                                int[] newTotalCases = WebSpider.getTotalCases();
+
+
+
                                 if (checkInLACounty(mLocation) >= 1){
                                     if (checkInLAResult <= 5){
                                         mCity = CITY_CODE_TO_NAME.get(checkInLAResult);
                                         if(mCity != null){
-                                            notificationContent = "You are now in " + mCity + " Right Now";
+                                            notificationContent = mCity + ".Total cases is "+ newTotalCases[checkInLAResult-1];
                                             Log.d(TAG, "Notification Content"+notificationContent);
                                         } else{
                                             Log.e(TAG, "getLocationAndSendNotification() CITY_CODE_TO_NAME return null");
                                         }
                                     } else{
-                                        notificationContent = "You are now in Los Angeles County Right Now";
+                                        notificationContent = "You are now in Los Angeles County Right Now. Total Cases Reported is 1,235,422";
                                         Log.d(TAG, "getLocationAndSendNotification() Notification Content"+notificationContent);
                                     }
 
@@ -197,7 +202,7 @@ public class NotificationHelper {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_ID);
         mBuilder.setSmallIcon(R.mipmap.ic_launcher);
 
-        mBuilder.setContentTitle("Your Daily Notification")
+        mBuilder.setContentTitle("Your Daily Covid Notification")
                 .setContentText(notificationContent)
                 .setAutoCancel(false)
                 .setContentIntent(resultPendingIntent);

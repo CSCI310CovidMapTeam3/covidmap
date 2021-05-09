@@ -28,13 +28,14 @@ import com.example.myapplication.ui.home.HomeFragment;
 import java.util.Calendar;
 
 public class NotificationReceiver extends BroadcastReceiver {
+    private static final String TAG = "NotificationReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         NotificationHelper notificationHelper = new NotificationHelper(context);
         notificationHelper.createNotification();
-
+        Log.v(TAG, "notification received!");
     }
 }
  

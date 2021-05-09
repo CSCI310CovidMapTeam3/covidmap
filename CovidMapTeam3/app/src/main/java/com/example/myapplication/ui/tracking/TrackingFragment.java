@@ -164,6 +164,7 @@ public class TrackingFragment extends Fragment {
                 deleteHistory.setOnClickListener(
                         view -> {
                             history.deleteByDate(dateClicked);
+                            onDayClick(dateClicked);
                         }
                 );
             }
