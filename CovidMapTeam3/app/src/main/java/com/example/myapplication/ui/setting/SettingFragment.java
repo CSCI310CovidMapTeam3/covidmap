@@ -24,7 +24,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterViewAnimator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -86,6 +89,12 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.ringtoneChoices, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ringtone.setAdapter(adapter2);
+        SharedPreferences oldSavedValues = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        String oldSoundSetting = oldSavedValues.getString("count", "default");
+        if (oldSoundSetting.equals("Fight On")) {
+            ringtone.setSelection(1);
+        }
         ringtone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -105,8 +114,8 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
 
         // set sound
         sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + BuildConfig.APPLICATION_ID + "/" + R.raw.fighton);
-        // RingtoneManager.getRingtone(getContext(), sound).play();
 
+        // RingtoneManager.getRingtone(getContext(), sound).play();
 
         Spinner dataRetention = root.findViewById(R.id.spinner3);
         ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(getActivity(), R.array.dataRetentionChoices, android.R.layout.simple_spinner_item);
@@ -239,6 +248,29 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                 getStorageSize() +
                 " MB.";
         storageSize.setText(storageInfo);
+
+        Switch notificationSwitch = (Switch) root.findViewById(R.id.switch1);
+
+        // check current state of a Switch (true or false).
+        int oldNotificationSetting = oldSavedValues.getInt("notification", -1);
+        if (oldNotificationSetting == 1) {
+            notificationSwitch.setChecked(true);
+        }
+        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences saved_values = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = saved_values.edit();
+                if (isChecked){
+                    Log.d("TAG", "Notification Switch Changed to On");
+                    editor.putInt("notification",1);
+                } else{
+                    Log.d("TAG", "Notification Switch Changed to Off");
+                    editor.putInt("notification",0);
+                }
+                editor.apply();
+
+            }
+        });
         return root;
     }
 

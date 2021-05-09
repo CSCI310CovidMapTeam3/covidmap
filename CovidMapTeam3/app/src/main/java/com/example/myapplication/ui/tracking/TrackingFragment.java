@@ -1,12 +1,15 @@
 package com.example.myapplication.ui.tracking;
 
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -155,6 +158,14 @@ public class TrackingFragment extends Fragment {
                     tr.addView(tv);
                     tl.addView(tr,++i);
                 }
+
+                Button deleteHistory;
+                deleteHistory = root.findViewById(R.id.deleteTracking);
+                deleteHistory.setOnClickListener(
+                        view -> {
+                            history.deleteByDate(dateClicked);
+                        }
+                );
             }
 
             @Override
