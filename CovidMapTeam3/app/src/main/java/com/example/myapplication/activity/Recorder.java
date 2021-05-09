@@ -37,7 +37,10 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Collections;
 
 public class Recorder extends Worker {
 
@@ -56,6 +59,18 @@ public class Recorder extends Worker {
      */
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+
+    public static final Map<Integer,String> MYHASH;
+    static{
+        Hashtable<Integer,String> tmp =
+                new Hashtable<Integer,String>();
+        tmp.put(1,"Santa Monica");
+        tmp.put(2,"Culver City");
+        tmp.put(3,"Beverly Hills");
+        tmp.put(4,"West Hollywood");
+        tmp.put(5,"Los Angeles City");
+        MYHASH = Collections.unmodifiableMap(tmp);
+    }
 
     public Recorder(
             @NonNull Context context,
@@ -118,11 +133,20 @@ public class Recorder extends Worker {
                                 HistoryDBHelper inst = HistoryDBHelper.getInstance(mContext);
                                 Date date = new Date();
                                 System.out.println(new Timestamp(date.getTime()));
-                                if (checkInLACounty(mLocation) == 1){
-                                    inst.addHistoryItem(mCity, mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                int checkInLAResult = checkInLACounty(mLocation);
+                                if (checkInLAResult >= 1){
+                                    if (checkInLAResult <= 5){
+                                        inst.addHistoryItem(MYHASH.get(checkInLAResult), mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                        Log.d(TAG, "Dummy Geocoder: In LA "+ MYHASH.get(checkInLAResult));
+                                    } else{
+                                        inst.addHistoryItem(mCity, mLocation.getLatitude(), mLocation.getLongitude(), new Timestamp(date.getTime()));
+                                    }
+
                                 } else{
                                     Log.d(TAG, "Geocoder: Not in LA, not Recorded " + mCity);
                                 }
+
+                                System.out.println(MYHASH.get(1));
 
                                 // new Timestamp(today.getTime());
                                 mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -155,8 +179,29 @@ public class Recorder extends Worker {
         if (location != null) {
             if (location.getLatitude() > 33.5 &&  location.getLatitude() < 34.8){
                 if (location.getLongitude() > -118.9 && location.getLongitude() < -117.6){
-                    Log.d(TAG, "checkInLACounty: In LA");
-                    return 1;
+                    Log.d(TAG, "checkInLACounty: In LA County");
+                    // Start Dummy and Hardcoded Geocoder for our real service area
+                    if (location.getLatitude() > 33.99 && location.getLatitude() < 34.10 && location.getLongitude() > -118.52 && location.getLongitude() < -118.20){
+                        if (location.getLongitude() < -118.43) {
+                            return 1; // Santa Monica
+                        } else if (location.getLongitude() < -118.39){
+                            if (location.getLatitude() > 34.06){
+                                return 3; // Beverly Hills
+                            } else {
+                                return 2; // Culver City
+                            }
+                        } else if (location.getLongitude() < -118.33){
+                            if (location.getLatitude() > 34.06){
+                                return 4; // West Hollywood
+                            } else {
+                                return 5; // Los Angeles City Downtown
+                            }
+                        } else {
+                            return 5; // Los Angeles City Downtown
+                        }
+                    } else {
+                        return 6; // In LA county but not in our service area
+                    }
                 }
             }
             Log.d(TAG, "checkInLACounty: Not In LA");

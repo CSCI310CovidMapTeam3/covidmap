@@ -6,21 +6,26 @@ import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -80,9 +85,12 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -128,7 +136,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private final long UPDATE_INTERVAL = 60 * 1000;  /* 60 second */
     private final long FASTEST_INTERVAL = 10 * 1000; /* 10 second */
 
-    Geocoder mGeocoder;
+    private Uri sound;
+
+    private static final String NOTIFICATION_CHANNEL_ID = "10001";
+    private static final String NOTIFICATION_CHANNEL_ID_CUSTOMIZED_SOUND = "10002";
+    private boolean useCustomizeSound = false;
+
+    public static final Map<Integer,String> CITY_CODE_TO_NAME;
+    static{
+        Hashtable<Integer,String> tmp =
+                new Hashtable<Integer,String>();
+        tmp.put(1,"Santa Monica");
+        tmp.put(2,"Culver City");
+        tmp.put(3,"Beverly Hills");
+        tmp.put(4,"West Hollywood");
+        tmp.put(5,"Los Angeles City");
+        CITY_CODE_TO_NAME = Collections.unmodifiableMap(tmp);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -230,7 +254,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
-        mGeocoder = new Geocoder(getActivity());
+
         Log.i(TAG, "On Map Ready");
         // defaultCity = new ViewModelProvider(this).get(SettingViewModel.class).getCity().getValue();
         Log.i(TAG, defaultCity);
@@ -624,7 +648,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             lastKnownLocation = task.getResult();
 
                             if (lastKnownLocation != null) {
-                                if (checkInLACounty() != -1) {
+                                if (checkInLACounty(lastKnownLocation) != -1) {
                                     // geofenceHelper(getContext());
                                     lastKnownLocationInLA = true;
                                     sharedViewModel.setCountyData("Los Angeles County");
@@ -660,66 +684,92 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private int checkInLACounty() { // 1 means in LA, 0 means location unknown, -1 means not in LA
-        if (lastKnownLocation != null) {
-            if (lastKnownLocation.getLatitude() > 33.5 && lastKnownLocation.getLatitude() < 34.8) {
-                if (lastKnownLocation.getLongitude() > -118.9 && lastKnownLocation.getLongitude() < -117.6) {
-                    Log.d(TAG, "checkInLACounty: In LA");
-                    return 1;
+    private int checkInLACounty(Location location){
+        if (location != null) {
+            if (location.getLatitude() > 33.5 &&  location.getLatitude() < 34.8){
+                if (location.getLongitude() > -118.9 && location.getLongitude() < -117.6){
+                    Log.d(TAG, "checkInLACounty: In LA County");
+                    // Start Dummy and Hardcoded Geocoder for our real service area
+                    if (location.getLatitude() > 33.99 && location.getLatitude() < 34.10 && location.getLongitude() > -118.52 && location.getLongitude() < -118.20){
+                        if (location.getLongitude() < -118.43) {
+                            return 1; // Santa Monica
+                        } else if (location.getLongitude() < -118.39){
+                            if (location.getLatitude() > 34.06){
+                                return 3; // Beverly Hills
+                            } else {
+                                return 2; // Culver City
+                            }
+                        } else if (location.getLongitude() < -118.33){
+                            if (location.getLatitude() > 34.06){
+                                return 4; // West Hollywood
+                            } else {
+                                return 5; // Los Angeles City Downtown
+                            }
+                        } else {
+                            return 5; // Los Angeles City Downtown
+                        }
+                    } else {
+                        return 6; // In LA county but not in our service area
+                    }
                 }
             }
             Log.d(TAG, "checkInLACounty: Not In LA");
             return -1;
         }
         Log.d(TAG, "checkInLACounty: Null Location");
-        return 0; // Location is Null Default to True
+        return 0; // Location is Null
     }
 
     private void geofenceHelper(Context mContext) {
 
-        String newGeoFencingCity;
+        String newGeoFencingCity = "";
 
         try {
-            List<Address> addresses = mGeocoder.getFromLocation(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), 1);
-            if (addresses.get(0) != null) {
-                if (addresses.get(0).getLocality() != null) {
-                    newGeoFencingCity = addresses.get(0).getLocality();
-                    // In our data format, Los Angeles is Los Angeles City
-                    if (newGeoFencingCity.equals("Los Angeles")){
-                        newGeoFencingCity = "Los Angeles City";
+            int checkInLAResult = checkInLACounty(lastKnownLocation);
+            if (checkInLAResult >= 1){
+                if (checkInLAResult <= 5){
+                    newGeoFencingCity = CITY_CODE_TO_NAME.get(checkInLAResult);
+                    if(newGeoFencingCity != null){
+                        Log.d(TAG, "Geofence: Dummy Geocoder New City is "+newGeoFencingCity);
+                    } else{
+                        Log.e(TAG, "Geofence: Dummy Geocoder New City return null");
                     }
-                    Log.d(TAG, "Geofence: Geocoder New City is " + newGeoFencingCity);
-                    Log.d(TAG, "Geofence: Geocoder Old City is " + geoFencingCity);
-
-                    // If city changed
-                    if (!newGeoFencingCity.equals(geoFencingCity)) {
-                        // If the original city is not empty
-                        if (!geoFencingCity.equals("")) {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("Welcome to ");
-                            sb.append(newGeoFencingCity);
-                            sb.append("\n");
-                            sb.append(getSnippetByCityName(geoFencingCity));
-                            Log.d(TAG, "Geofence: Push notification, update City");
-                            Log.d(TAG, "Geofence"+sb.toString());
-                            sendGeofenceNotification(sb.toString());
-                        }
-                    }
-                    geoFencingCity = newGeoFencingCity;
-                } else {
-                    Log.d(TAG, "Geofence: Geocoder Locality Null");
+                } else{
+                    newGeoFencingCity = "Los Angeles County";
+                    Log.d(TAG, "Geofence: Dummy Geocoder New City return In Los Angeles County");
                 }
-            } else {
-                Log.d(TAG, "Geofence: Geocoder Address Null");
+
+            } else{
+                newGeoFencingCity = "Not in Los Angeles County";
+                Log.d(TAG, "Geofence: Dummy Geocoder New City return not in Los Angeles County");
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Geofence: Geocoder Exception during Geocoder. " + e);
+
+            // If city changed
+            if (!newGeoFencingCity.equals(geoFencingCity)) {
+                // If the original city is not empty
+                if (!geoFencingCity.equals("")) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Welcome to ");
+                    sb.append(newGeoFencingCity);
+                    sb.append("\n");
+                    sb.append(getSnippetByCityName(geoFencingCity));
+                    Log.d(TAG, "Geofence: Push notification, update City");
+                    Log.d(TAG, "Geofence"+sb.toString());
+                    sendGeofenceNotification(sb.toString());
+                }
+            }
+
+            geoFencingCity = newGeoFencingCity;
+        } catch (Exception e) {
+            Log.e(TAG, "Geofence: Dummy Geocoder Exception during Geocoder. " + e);
             e.printStackTrace();
         }
         Log.d(TAG, "Geofence: Current Geofence City is" + geoFencingCity);
     }
 
     private void startLocationUpdates() {
+        getSoundPreference();
+
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
@@ -771,39 +821,72 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     // Zhian Li: I copyed code from Yijia Chen on notification
     public void sendGeofenceNotification(String message){
-        Uri sound = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + R.raw.ring);
-
-        CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);
-        String description = getString(R.string.common_google_play_services_notification_channel_name);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel("my_channel_1", name, importance);
-        channel.setDescription(description);
 
-//                    // set channel sound
-//                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
-//                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-//                            .build();
-//                    channel.setSound(sound, audioAttributes);
+        NotificationChannel notificationChannel;
 
-        NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
+        Intent intent = new Intent(getContext(), HomeFragment.class);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(), 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "my_channel_1")
-                .setSound(sound)
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getContext(),
+                0 /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle("Geofence NOTIFICATION")
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
 
+        if (useCustomizeSound){
+            builder.setSound(sound);
+        }
+
+        if (useCustomizeSound){
+            notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_CUSTOMIZED_SOUND, "NOTIFICATION_CHANNEL_CUSTOMIZED_SOUND_NAME", importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+            // Set Channel Sound
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            notificationChannel.setSound(sound, audioAttributes);
+
+            Log.d(TAG, "sendGeofenceNotification(): using customized sound");
+            builder.setChannelId(NOTIFICATION_CHANNEL_ID_CUSTOMIZED_SOUND);
+        } else{
+            notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+        }
+        NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(notificationChannel);
 
         // NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(42, builder.build());
     }
 
+    private void getSoundPreference(){
+        sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + BuildConfig.APPLICATION_ID + "/" + R.raw.fighton);
+
+        SharedPreferences saved_values = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        String currentSoundSetting = saved_values.getString("count", "default");
+        Log.d(TAG, "getSoundPreference(): "+ currentSoundSetting);
+
+        if (currentSoundSetting.equals("Fight On")) {
+            useCustomizeSound = true;
+        }
+    }
 }
