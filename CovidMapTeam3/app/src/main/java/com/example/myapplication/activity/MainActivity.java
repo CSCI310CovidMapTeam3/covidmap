@@ -117,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
             File logDirectory = new File( appDirectory + "/logs" );
             File logFile = new File( logDirectory, "logcat_" + System.currentTimeMillis() + ".txt" );
 
+            File path = getApplicationContext().getExternalFilesDir(null);
+
+            Date date = new Date();
+            String dateString = new SimpleDateFormat("-MM-dd-yyyy", Locale.US).format(date);
+            String filename = "log" + dateString + ".txt";
+
+            File file = new File(path, filename);
+            Log.d(TAG, "appendLog: "+file.toString());
+
             // create app folder
             if ( !appDirectory.exists() ) {
                 appDirectory.mkdir();
@@ -130,14 +139,15 @@ public class MainActivity extends AppCompatActivity {
             // clear the previous logcat and then write the new one to the file
             try {
                 Process process = Runtime.getRuntime().exec("logcat -c");
-                Runtime.getRuntime().exec("logcat -f" + " /sdcard/Logcat.txt");
+                // Runtime.getRuntime().exec("logcat -f" + " "+ file.toString());
+                Runtime.getRuntime().exec("logcat -f" + " "+ file.toString() + " *:W");
             } catch ( IOException e ) {
                 e.printStackTrace();
             }
 
             Log.d("MainActivity", "Readable & Writable");
 
-            appendLog("My Log");
+            //appendLog("My Log");
 
             try {
                 writeToFile("My Log");
@@ -177,11 +187,13 @@ public class MainActivity extends AppCompatActivity {
     public void appendLog(String text)
     {
         File path = getApplicationContext().getExternalFilesDir(null);
+
         Date date = new Date();
         String dateString = new SimpleDateFormat("-MM-dd-yyyy", Locale.US).format(date);
         String filename = "log" + dateString + ".txt";
 
         File file = new File(path, filename);
+        Log.d(TAG, "appendLog: "+file.toString());
         try
         {
             //BufferedWriter for performance, true to set append to file flag
