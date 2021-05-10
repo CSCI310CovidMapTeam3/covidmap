@@ -52,7 +52,7 @@ public class WebSpider {
             Connection.Response response = Jsoup.connect(baseURL).method(Connection.Method.GET).userAgent("Mozilla").execute();
             Document doc = response.parse();
             Elements elements = doc.getElementsByClass("container-xl pb-4");
-            Elements eleCity = elements.get(1).children().get(0).children().get(0).children().get(1).children().get(1).children();
+            Elements eleCity = elements.get(0).children().get(0).children().get(0).children().get(1).children().get(1).children();
 //            results = new int[]{0, 0, 0, 0, 0};
             for(Element element:eleCity) {
                 Elements tdsElements = element.select("td");
@@ -73,12 +73,12 @@ public class WebSpider {
                     String forteen = tdsElements.get(1).text();
                     totalResults[3]=Integer.parseInt(forteen);
                 }
-                if(nameString.equals("Los Angeles - Downtown")) {
+                if(nameString.equals("Los Angeles - Downtown*")) {
                     String forteen = tdsElements.get(1).text();
                     totalResults[4]=Integer.parseInt(forteen);
                 }
             }
-            Log.v(TAG, totalResults.toString());
+            Log.v(TAG, "getTotalCases-"+String.valueOf(totalResults[0]));
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -126,11 +126,11 @@ public class WebSpider {
                     results[4]=Integer.parseInt(forteen);
                 }
             }
-            Log.v(TAG, results.toString());
+            Log.v(TAG, "getVaccinated-"+results[0]);
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            Log.v(TAG, "getVaccinated-"+e.toString());
+            Log.v(TAG, "ERRORgetVaccinated-"+e.toString());
             return new int[]{0, 0, 0, 0, 0};
         }
         return results;
