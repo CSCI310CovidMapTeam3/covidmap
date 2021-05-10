@@ -230,6 +230,19 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
                     String currentSoundSetting = saved_values.getString("count", "default");
                     Log.d("SoundSetting", "onCreateView: "+ currentSoundSetting);
 
+
+                    int currentNotificationSetting = saved_values.getInt("notification", 1);
+
+                    if (currentNotificationSetting == 0){
+                        AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(getContext());
+                        alertDialogBuilder.setTitle("Notification Off");
+                        alertDialogBuilder.setMessage("You turned off your notification!");
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show(); // Show Dialog
+                        return;
+                    }
+                    Log.d("SoundSetting", "onCreateView: "+ currentSoundSetting);
+
                     if (!currentSoundSetting.equals("Fight On")) {
                         sendNotificationDefaultSound();
                     } else{
@@ -253,7 +266,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
 
         // check current state of a Switch (true or false).
         int oldNotificationSetting = oldSavedValues.getInt("notification", -1);
-        if (oldNotificationSetting == 1) {
+        if (oldNotificationSetting != 0) {
             notificationSwitch.setChecked(true);
         }
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -304,7 +317,7 @@ public class SettingFragment extends Fragment implements AdapterView.OnItemSelec
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendNotificationCustomizedSound(){
-        String CHANNEL_ID="69";
+        String CHANNEL_ID="3469";
 
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         CharSequence name = getString(R.string.common_google_play_services_notification_channel_name);

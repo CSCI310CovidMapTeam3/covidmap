@@ -141,6 +141,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
     private static final String NOTIFICATION_CHANNEL_ID_CUSTOMIZED_SOUND = "10002";
     private boolean useCustomizeSound = false;
+    private boolean allowNotification = true;
 
     public static final Map<Integer,String> CITY_CODE_TO_NAME;
     static{
@@ -821,6 +822,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     // Zhian Li: I copyed code from Yijia Chen on notification
     public void sendGeofenceNotification(String message){
+        if (!allowNotification) {
+            Log.d(TAG, "sendGeofenceNotification notification off");
+            return;
+        }
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
 
         NotificationChannel notificationChannel;
@@ -889,6 +894,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             useCustomizeSound = true;
         }
 
+        int currentNotificationSetting = saved_values.getInt("notification", 1);
+
+        if (currentNotificationSetting == 0) {
+            allowNotification = false;
+        }
 
     }
 }
